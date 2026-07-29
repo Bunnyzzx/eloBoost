@@ -136,9 +136,8 @@ impl Database {
             .map(Into::into)
             .collect();
 
-        let size_bytes = std::fs::metadata(&self.path)
-            .map(|meta| meta.len())
-            .unwrap_or(0);
+        // Banco em memória (testes) não tem arquivo em disco: tamanho zero.
+        let size_bytes = std::fs::metadata(&self.path).map_or(0, |meta| meta.len());
 
         Ok(DatabaseStatus {
             schema_version,

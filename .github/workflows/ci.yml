@@ -49,9 +49,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
+      # A versão e os componentes vêm de rust-toolchain.toml, para que o CI e a
+      # máquina do desenvolvedor rodem exatamente o mesmo Clippy.
+      - name: Instalar toolchain fixado
+        run: rustup show active-toolchain
 
       - uses: Swatinem/rust-cache@v2
 
@@ -87,7 +88,8 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Instalar toolchain fixado
+        run: rustup show active-toolchain
 
       - uses: Swatinem/rust-cache@v2
 
