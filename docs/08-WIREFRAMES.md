@@ -4,7 +4,7 @@ Status: **Entrega 1 — planejamento**.
 
 ---
 
-## 1. Identidade visual do BoostCore
+## 1. Identidade visual do eloBoost
 
 Identidade **própria**, criada para este produto. Nenhum ativo, nome, ícone, texto ou paleta
 copiado de outro aplicativo.
@@ -16,7 +16,7 @@ sem estética de "turbo/racing". A confiança vem da clareza, não de promessas.
 ### Logotipo
 Marca geométrica: um **hexágono de traço fino** (o "core") com um traço interno ascendente que
 sugere um gráfico e, ao mesmo tempo, a letra "B". Monocromático em azul elétrico sobre fundo
-escuro; versão em branco puro para uso monocromático. Wordmark: `BoostCore` em Inter SemiBold,
+escuro; versão em branco puro para uso monocromático. Wordmark: `eloBoost` em Inter SemiBold,
 com "Core" em peso menor e cor secundária.
 
 ### Tokens de cor (CSS custom properties)
@@ -75,7 +75,7 @@ em toda métrica, para não "dançar" durante atualizações em tempo real.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────┐
-│ ⬡ BoostCore          Dashboard                     🛡 Normal   🔔   ⚙   ─ □ ✕ │  Header 56px
+│ ⬡ eloBoost          Dashboard                     🛡 Normal   🔔   ⚙   ─ □ ✕ │  Header 56px
 ├───────────┬────────────────────────────────────────────────────────────────────┤
 │           │                                                                    │
 │ ⌂ Início  │                                                                    │
@@ -279,7 +279,7 @@ Aplicativos            🔍 buscar    [Tamanho ▾] [Todos ▾]      142 apps ·
 └───────────────────────────────────────────────────────────────────────────┘
 
 ⓘ A desinstalação usa o desinstalador oficial de cada programa.
-  O BoostCore nunca apaga a pasta de um aplicativo por conta própria.
+  O eloBoost nunca apaga a pasta de um aplicativo por conta própria.
 ```
 
 Filtros: nome, tamanho, data, desenvolvedor, "apps grandes (> 1 GB)", "componentes do sistema
@@ -364,12 +364,12 @@ padrão, nunca um valor plausível inventado.
 Restauração
 
 ┌ Pontos de restauração do Windows ───────────────────── [ Criar ponto 🛡 ] ┐
-│ 27/07/2026 14:02  BoostCore — antes de otimizações      Sistema  [Restaurar]│
+│ 27/07/2026 14:02  eloBoost — antes de otimizações      Sistema  [Restaurar]│
 │ 25/07/2026 09:10  Windows Update                        Sistema  [Restaurar]│
 │ ⓘ Restaurar abre a ferramenta oficial do Windows.                          │
 └────────────────────────────────────────────────────────────────────────────┘
 
-┌ Backups do BoostCore ──────────────────────────────────────────────────────┐
+┌ Backups do eloBoost ──────────────────────────────────────────────────────┐
 │ 27/07 14:02  Otimizações (3 alterações)   ✓ válido                         │
 │              MenuShowDelay, Modo de jogo, Efeitos visuais                  │
 │                            [Ver alterações] [Restaurar] [Exportar] [Excluir]│
@@ -402,7 +402,7 @@ locais; restaurar padrões).
 
 ### 3.12 Sobre
 Versão, changelog, licenças de terceiros, política de privacidade, avisos de segurança,
-"o que o BoostCore nunca faz" (lista explícita), links locais para a documentação.
+"o que o eloBoost nunca faz" (lista explícita), links locais para a documentação.
 
 ### 3.13 Autenticação (opcional)
 Tela existe apenas para a conta Pro futura. **Todas as funções locais funcionam sem conta.**
@@ -446,7 +446,7 @@ feito".
 ### 4.5 Criação de ponto de restauração
 ```
 ┌ Criar ponto de restauração ────────────────────────────────────┐
-│  Descrição: [ BoostCore — antes de otimizações            ]    │
+│  Descrição: [ eloBoost — antes de otimizações            ]    │
 │  Disco: C: · Proteção do Sistema: ativada                      │
 │  Espaço reservado: 12 GB de 476 GB                             │
 │  ⓘ Pode levar alguns minutos. Exige administrador.             │

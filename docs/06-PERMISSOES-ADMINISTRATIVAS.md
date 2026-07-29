@@ -2,7 +2,7 @@
 
 Status: **Entrega 1 — planejamento**.
 
-Princípio (requisito 17): o BoostCore **não roda elevado**. Ele roda com o token normal do
+Princípio (requisito 17): o eloBoost **não roda elevado**. Ele roda com o token normal do
 usuário e pede elevação **por operação**, explicando antes o motivo. O UAC nunca é contornado,
 adiado ou "reduzido" — nem por conveniência.
 
@@ -34,7 +34,7 @@ Toda a UI, monitoramento, listagens e:
 | Otimizações que gravam em `HKLM` | ACL |
 | Encerrar processo de outro usuário ou de serviço | `SeDebugPrivilege` |
 | Otimizar unidades (defrag/TRIM via API oficial) | ACL |
-| Instalar atualização do próprio BoostCore | Escreve em `Program Files` |
+| Instalar atualização do próprio eloBoost | Escreve em `Program Files` |
 
 ### Nível 2 — nunca oferecidas
 Desativar Defender, firewall, Windows Update, remover serviços essenciais, desativar
@@ -62,7 +62,7 @@ paginação/isolamento de núcleo, alterar BCD. Não existem no catálogo e são
         │  permissão de administrador.                             │
         │                                                          │
         │  O que será feito:                                       │
-        │   • Criar um ponto de restauração chamado "BoostCore –   │
+        │   • Criar um ponto de restauração chamado "eloBoost –   │
         │     antes de otimizações" no disco C:                    │
         │                                                          │
         │  O que NÃO será feito:                                   │
@@ -74,7 +74,7 @@ paginação/isolamento de núcleo, alterar BCD. Não existem no catálogo e são
         │            [ Cancelar ]     [ Continuar ]                │
         └──────────────────────────────────────────────────────────┘
         │
-⑤ Usuário confirma → ShellExecuteEx(verb = "runas", BoostCore.Elevator.exe)
+⑤ Usuário confirma → ShellExecuteEx(verb = "runas", eloBoost.Elevator.exe)
         │  → Windows exibe o UAC (diálogo do SO, não nosso)
         │
 ⑥ Elevator inicia, conecta ao named pipe, verifica assinatura do processo chamador
@@ -113,7 +113,7 @@ clicar sem ler. Solução:
 ## 4. Contrato do Elevator
 
 ```rust
-// crates/boostcore-core/src/elevated_ops.rs — compartilhado e revalidado dos dois lados
+// crates/elo-core/src/elevated_ops.rs — compartilhado e revalidado dos dois lados
 #[derive(Serialize, Deserialize)]
 #[serde(tag = "op", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ElevatedOperation {
@@ -140,7 +140,7 @@ Características que tornam isso seguro:
 - Toda operação escreve seu resultado e o `operation_id` de volta; nada acontece "em silêncio".
 
 ### Proteção do canal
-- Pipe: `\\.\pipe\BoostCore.Elevator.<sid-do-usuário>` com *security descriptor* que concede
+- Pipe: `\\.\pipe\eloBoost.Elevator.<sid-do-usuário>` com *security descriptor* que concede
   acesso apenas ao SID do usuário interativo e a `SYSTEM`.
 - O Elevator obtém o PID do cliente (`GetNamedPipeClientProcessId`) e verifica:
   assinatura Authenticode válida do nosso certificado **e** caminho do executável dentro do

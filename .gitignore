@@ -1,0 +1,39 @@
+# Dependências
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+dist-ssr/
+target/
+*.local
+
+# Testes
+coverage/
+.vitest/
+
+# Rust
+**/*.rs.bk
+
+# Ambiente
+.env
+.env.*
+!.env.example
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Artefatos locais do eloBoost em desenvolvimento
+*.db
+*.db-wal
+*.db-shm
+logs/

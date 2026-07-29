@@ -47,7 +47,7 @@ sucesso sem releitura.
 
 ## 3. Formato do snapshot interno
 
-`%LOCALAPPDATA%\BoostCore\backups\<uuid>.json` + `sha256` registrado em `backups`:
+`%LOCALAPPDATA%\eloBoost\backups\<uuid>.json` + `sha256` registrado em `backups`:
 
 ```jsonc
 {
@@ -130,7 +130,7 @@ seria restaurado. Requisito 13 atendido.
 ## 6. Pontos de restauração do Windows
 
 - Criados via `SRSetRestorePoint` (`APPLICATION_INSTALL` / `MODIFY_SETTINGS`), com descrição
-  padronizada `BoostCore — <motivo> — <data>`.
+  padronizada `eloBoost — <motivo> — <data>`.
 - O Windows limita a **um ponto por 24h por padrão** (`SystemRestorePointCreationFrequency`).
   **Não alteramos essa política do usuário.** Quando bloqueado, informamos:
   "O Windows já criou um ponto de restauração recentemente; ele será usado." e mostramos a data

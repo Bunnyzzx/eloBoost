@@ -1,4 +1,4 @@
-# 01 — Arquitetura do BoostCore
+# 01 — Arquitetura do eloBoost
 
 Status: **Entrega 1 — planejamento**.
 
@@ -8,7 +8,7 @@ Status: **Entrega 1 — planejamento**.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│  PROCESSO DE UI — BoostCore.exe (integridade média, sem elevação)        │
+│  PROCESSO DE UI — eloBoost.exe (integridade média, sem elevação)        │
 │                                                                          │
 │  ┌────────────────────────────────────────────────────────────────────┐  │
 │  │ WebView2 — React + TypeScript                                      │  │
@@ -32,10 +32,10 @@ Status: **Entrega 1 — planejamento**.
 │  │  models/ errors/ logging/                                          │  │
 │  └──────────────────────────┬─────────────────────────────────────────┘  │
 └─────────────────────────────┼────────────────────────────────────────────┘
-                              │ named pipe \\.\pipe\BoostCore.Elevator.<sid>
+                              │ named pipe \\.\pipe\eloBoost.Elevator.<sid>
                               │ (ACL: só o SID do usuário; JSON tipado)
 ┌─────────────────────────────▼────────────────────────────────────────────┐
-│  BoostCore.Elevator.exe (integridade alta, só durante a operação)        │
+│  eloBoost.Elevator.exe (integridade alta, só durante a operação)        │
 │  Catálogo FECHADO de operações privilegiadas + revalidação completa      │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
@@ -98,7 +98,7 @@ backend só apaga aquilo que ele próprio analisou e apresentou.
 | `StartupManagerService` | Enumera e alterna itens de inicialização | Sim para HKLM e serviços | Registro (`Run`, `RunOnce`, `StartupApproved`), pasta Startup, Task Scheduler (COM `ITaskService`) |
 | `ProcessManagerService` | Lista/encerra processos | Sim para processos de outros usuários | `CreateToolhelp32Snapshot`, `NtQuerySystemInformation`, `QueryFullProcessImageName`, PDH |
 | `OptimizationService` | Lê estado atual, aplica, reverte | Depende do ajuste | Registro, `PowerSetActiveScheme`, `SystemParametersInfo` |
-| `BackupService` | Snapshots internos (JSON assinado por hash) | Não | SQLite + `%LOCALAPPDATA%\BoostCore\backups` |
+| `BackupService` | Snapshots internos (JSON assinado por hash) | Não | SQLite + `%LOCALAPPDATA%\eloBoost\backups` |
 | `RestorePointService` | Pontos de restauração do Windows | **Sim** | `SRSetRestorePoint` (srclient.dll) |
 | `ApplicationManagerService` | Apps instalados, desinstalação oficial | Depende do app | Registro `Uninstall` (HKLM/HKCU, 32/64) + `PackageManager` (MSIX) |
 | `ActivityLogService` | Histórico legível + undo | Não | SQLite |
@@ -156,12 +156,12 @@ já persistidos — nunca deixamos o banco inconsistente com o disco.
 
 ## 9. Persistência
 
-SQLite em `%APPDATA%\BoostCore\boostcore.db` (WAL ativado), migrations versionadas em
+SQLite em `%APPDATA%\eloBoost\eloboost.db` (WAL ativado), migrations versionadas em
 `src-tauri/migrations/NNNN_nome.sql` aplicadas na inicialização dentro de uma transação, com
 tabela `schema_migrations`. Detalhes em `docs/03-MODELO-DE-DADOS.md`.
 
 Arquivos grandes (snapshots de backup, relatórios exportados) ficam fora do banco, em
-`%LOCALAPPDATA%\BoostCore\backups\<uuid>.json` com hash SHA-256 registrado na tabela `backups`.
+`%LOCALAPPDATA%\eloBoost\backups\<uuid>.json` com hash SHA-256 registrado na tabela `backups`.
 
 ## 10. Estratégia de erros
 

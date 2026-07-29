@@ -1,4 +1,4 @@
-# BoostCore
+# eloBoost
 
 > Utilitário de limpeza, manutenção e otimização **segura** para Windows 10 e 11.
 >
@@ -9,7 +9,7 @@
 
 ## O que é
 
-O BoostCore centraliza ferramentas legítimas de manutenção do Windows — limpeza de temporários,
+O eloBoost centraliza ferramentas legítimas de manutenção do Windows — limpeza de temporários,
 análise de armazenamento, gerenciamento de inicialização, processos, aplicativos instalados,
 monitoramento e ajustes de desempenho — com três compromissos inegociáveis:
 
@@ -18,7 +18,7 @@ monitoramento e ajustes de desempenho — com três compromissos inegociáveis:
 3. **Transparência total**: os caminhos analisados, os critérios de saúde e a origem de cada
    métrica são exibidos ao usuário.
 
-## O que o BoostCore nunca fará
+## O que o eloBoost nunca fará
 
 - Desativar Windows Defender, firewall ou Windows Update.
 - Prometer ganho de FPS ou qualquer número de desempenho não medido.
@@ -71,4 +71,4 @@ avançados · plano Pro opcional (sem bloquear funções de segurança).
 Este repositório contém **apenas planejamento**. Antes de iniciar o Épico 0 (fundação), preciso
 da sua validação sobre as decisões listadas em
 [`docs/10-RISCOS.md` §4](docs/10-RISCOS.md) — principalmente o broker elevado (D-1), o uso da
-Lixeira por padrão (D-2) e o nome definitivo do produto (D-4).
+Lixeira por padrão (D-2). O nome do produto (D-4) já está definido como **eloBoost**.

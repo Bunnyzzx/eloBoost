@@ -139,11 +139,11 @@ operação**. No Windows um processo não pode elevar a si mesmo em runtime — 
 criação. Portanto:
 
 ```
-BoostCore.exe            (integridade média, usuário comum)   ← UI + 95% das funções
+eloBoost.exe            (integridade média, usuário comum)   ← UI + 95% das funções
         │  IPC local: named pipe com ACL restrita ao SID do usuário,
         │  protocolo JSON tipado, mensagens de operação nomeadas (nunca comando livre)
         ▼
-BoostCore.Elevator.exe   (integridade alta, disparado via ShellExecute "runas" → UAC)
+eloBoost.Elevator.exe   (integridade alta, disparado via ShellExecute "runas" → UAC)
                           ← binário separado, assinado, com um catálogo FECHADO de operações
 ```
 

@@ -66,7 +66,7 @@ exigir elevação; o scan reporta `partiallyAccessible: true` em vez de falhar.
 | `apps_reveal_location` | `{ appId }` | `()` |
 
 > `apps_uninstall` **lança o desinstalador oficial registrado** (`UninstallString` /
-> `PackageManager.RemovePackageAsync`) e devolve o resultado do lançamento. O BoostCore nunca
+> `PackageManager.RemovePackageAsync`) e devolve o resultado do lançamento. O eloBoost nunca
 > apaga a pasta de um aplicativo.
 
 ### Processos
@@ -474,7 +474,7 @@ Todo comando valida antes de qualquer efeito colateral:
 | Código | Quando | Mensagem ao usuário (pt-BR) | Sugestão | Retentável |
 |---|---|---|---|---|
 | `PERMISSION_DENIED` | Falta privilégio | "O Windows negou acesso a este recurso." | "Execute a ação com permissão de administrador." | sim |
-| `PATH_NOT_ALLOWED` | Fora da allowlist / traversal / symlink suspeito | "Este local não pode ser modificado pelo BoostCore." | "Isso protege arquivos importantes. Nenhuma ação é necessária." | não |
+| `PATH_NOT_ALLOWED` | Fora da allowlist / traversal / symlink suspeito | "Este local não pode ser modificado pelo eloBoost." | "Isso protege arquivos importantes. Nenhuma ação é necessária." | não |
 | `FILE_IN_USE` | Arquivo bloqueado | "Alguns arquivos estão em uso e foram ignorados." | "Feche os programas relacionados e analise novamente." | sim |
 | `BROWSER_RUNNING` | Navegador aberto | "O {navegador} está aberto." | "Feche o navegador ou ignore-o nesta limpeza." | sim |
 | `OPERATION_CANCELLED` | Usuário cancelou | "Operação cancelada." | — | sim |

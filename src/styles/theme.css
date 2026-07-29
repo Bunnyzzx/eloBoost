@@ -1,0 +1,100 @@
+/**
+ * eloBoost — tokens do design system.
+ *
+ * Identidade própria (docs/08-WIREFRAMES.md §1). Todos os tokens são declarados
+ * aqui e expostos ao Tailwind v4 via `@theme inline` em globals.css, de modo que
+ * o tema claro/escuro troque apenas trocando o valor da variável — nenhum
+ * componente precisa saber qual tema está ativo.
+ */
+
+:root {
+  /* ── Superfícies (azul-marinho quase preto) ── */
+  --elo-bg-base: #070b14;
+  --elo-bg-surface: #0d1425;
+  --elo-bg-elevated: #131c32;
+  --elo-bg-overlay: rgb(7 11 20 / 72%);
+
+  /* ── Bordas ── */
+  --elo-border-subtle: #1c2942;
+  --elo-border-strong: #2a3b5c;
+
+  /* ── Texto ── */
+  --elo-text-primary: #eaf0fa;
+  --elo-text-secondary: #9cafcb;
+  --elo-text-muted: #647695;
+
+  /* ── Marca ── */
+  --elo-accent: #3d7eff;
+  --elo-accent-hover: #5b93ff;
+  --elo-accent-soft: rgb(61 126 255 / 12%);
+  --elo-accent-contrast: #f5f9ff;
+  --elo-violet: #8b5cf6;
+
+  /* ── Semântica de status ──
+     Nunca usada como ÚNICO indicador: sempre acompanhada de ícone e rótulo
+     textual (docs/08 §6 — acessibilidade). */
+  --elo-ok: #2ed47a;
+  --elo-ok-soft: rgb(46 212 122 / 12%);
+  --elo-attention: #f5a524;
+  --elo-attention-soft: rgb(245 165 36 / 12%);
+  --elo-critical: #f2545b;
+  --elo-critical-soft: rgb(242 84 91 / 12%);
+
+  /* ── Foco ── */
+  --elo-focus-ring: #7aa7ff;
+
+  /* ── Elevação ── */
+  --elo-shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --elo-shadow-md: 0 1px 2px rgb(0 0 0 / 40%), 0 8px 24px rgb(0 0 0 / 28%);
+  --elo-shadow-lg: 0 2px 4px rgb(0 0 0 / 40%), 0 16px 48px rgb(0 0 0 / 36%);
+
+  /* ── Raios ── */
+  --elo-radius-control: 8px;
+  --elo-radius-card: 14px;
+  --elo-radius-modal: 20px;
+
+  /* ── Movimento ── */
+  --elo-ease: cubic-bezier(0.2, 0, 0, 1);
+  --elo-duration-fast: 150ms;
+  --elo-duration-base: 200ms;
+  --elo-duration-slow: 320ms;
+
+  /* ── Escala da interface (configurável em Configurações, 90%–130%) ── */
+  --elo-ui-scale: 1;
+}
+
+/**
+ * Tema claro. Previsto desde o início; o escuro é o padrão do produto.
+ * Ativado por `data-theme="light"` no elemento raiz.
+ */
+:root[data-theme='light'] {
+  --elo-bg-base: #f4f7fc;
+  --elo-bg-surface: #ffffff;
+  --elo-bg-elevated: #ffffff;
+  --elo-bg-overlay: rgb(23 33 51 / 40%);
+
+  --elo-border-subtle: #dde5f2;
+  --elo-border-strong: #c3d0e5;
+
+  --elo-text-primary: #101a2e;
+  --elo-text-secondary: #47597a;
+  --elo-text-muted: #6b7c99;
+
+  --elo-accent: #1f5fe0;
+  --elo-accent-hover: #1a53c9;
+  --elo-accent-soft: rgb(31 95 224 / 10%);
+  --elo-accent-contrast: #ffffff;
+
+  --elo-ok: #12874a;
+  --elo-ok-soft: rgb(18 135 74 / 12%);
+  --elo-attention: #9a6100;
+  --elo-attention-soft: rgb(154 97 0 / 12%);
+  --elo-critical: #c62b32;
+  --elo-critical-soft: rgb(198 43 50 / 12%);
+
+  --elo-focus-ring: #1f5fe0;
+
+  --elo-shadow-sm: 0 1px 2px rgb(16 26 46 / 8%);
+  --elo-shadow-md: 0 1px 2px rgb(16 26 46 / 8%), 0 8px 24px rgb(16 26 46 / 8%);
+  --elo-shadow-lg: 0 2px 4px rgb(16 26 46 / 10%), 0 16px 48px rgb(16 26 46 / 12%);
+}

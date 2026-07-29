@@ -2,7 +2,7 @@
 
 Status: **Entrega 1 — planejamento**.
 
-O BoostCore apaga arquivos e altera o registro. O modelo de segurança não é um item de checklist:
+O eloBoost apaga arquivos e altera o registro. O modelo de segurança não é um item de checklist:
 é o produto. Este documento define o que o app **pode**, o que ele **nunca** faz e como isso é
 garantido por construção, não por boa intenção.
 
@@ -36,7 +36,7 @@ validate(candidate, intent) -> Result<ValidatedPath, PathRejection>
 
 1. Rejeitar imediatamente se contém: NUL, caracteres de controle, "..", ADS (":" após a letra
    de unidade), prefixos de dispositivo (\\.\ , \\?\ , CON, PRN, AUX, NUL, COM1..9, LPT1..9).
-2. Rejeitar caminhos UNC (\\servidor\share) — o BoostCore não limpa rede.
+2. Rejeitar caminhos UNC (\\servidor\share) — o eloBoost não limpa rede.
 3. Canonicalizar SEM seguir o último componente (GetFinalPathNameByHandle com
    FILE_FLAG_OPEN_REPARSE_POINT).
 4. Verificar que a raiz canônica pertence à ALLOWLIST da categoria em questão.
@@ -166,7 +166,7 @@ serviço recusa e um teste de unidade falha o build.
 | Caminhos mascarados | `C:\Users\Ana\AppData\Local\Temp\x.tmp` → `%LOCALAPPDATA%\Temp\x.tmp`; nome do usuário substituído por `%USER%` |
 | Nomes de arquivos pessoais | Em `downloads_old` e duplicados, o log registra hash curto + tamanho, não o nome |
 | Níveis | `debug` (só com modo avançado ativo), `info`, `warning`, `error` |
-| Rotação | 5 arquivos × 5 MB, `%LOCALAPPDATA%\BoostCore\logs` |
+| Rotação | 5 arquivos × 5 MB, `%LOCALAPPDATA%\eloBoost\logs` |
 | `operation_id` | Presente em toda linha; é a chave para o usuário reportar um problema sem enviar o log inteiro |
 | Exportação | Opt-in, com prévia do conteúdo e aviso do que contém |
 
@@ -180,7 +180,7 @@ serviço recusa e um teste de unidade falha o build.
   `system/ffi.rs`, com `// SAFETY:` obrigatório por bloco.
 - Compilação com mitigações do Windows: `/DYNAMICBASE /NXCOMPAT /guard:cf` (via flags do MSVC),
   CFG habilitado.
-- Assinatura Authenticode do `BoostCore.exe`, do `BoostCore.Elevator.exe` e do instalador
+- Assinatura Authenticode do `eloBoost.exe`, do `eloBoost.Elevator.exe` e do instalador
   (preparado no pipeline; certificado a ser provido posteriormente).
 
 ## 8. Checklist de revisão de segurança por PR

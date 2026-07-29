@@ -2,7 +2,7 @@
 
 Status: **Entrega 1 — planejamento**.
 
-Local: `%APPDATA%\BoostCore\boostcore.db` · Modo WAL · `foreign_keys = ON` ·
+Local: `%APPDATA%\eloBoost\eloboost.db` · Modo WAL · `foreign_keys = ON` ·
 `journal_size_limit` para evitar crescimento indefinido.
 
 Convenções:
@@ -40,7 +40,7 @@ Regras:
   `InvalidConfiguration` — evita divergência silenciosa entre builds.
 - **Nunca editamos uma migration já publicada**; criamos a próxima.
 - Downgrade não é suportado; o app detecta `user_version` futura e exibe
-  "banco criado por versão mais nova do BoostCore".
+  "banco criado por versão mais nova do eloBoost".
 
 ---
 

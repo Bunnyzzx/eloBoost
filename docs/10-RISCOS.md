@@ -9,7 +9,7 @@ Status: **Entrega 1 — planejamento**.
 | # | Risco | Prob. | Impacto | Mitigação | Sinal de alerta |
 |---|---|---|---|---|---|
 | R-01 | Bug de caminho apaga dados do usuário | Baixa | **Catastrófico** | `PathGuard` por handle, allowlist, Épico 2 antes do Épico 3, suíte adversarial, Lixeira por padrão em risco médio | Qualquer PR que remova arquivo sem `ValidatedPath` |
-| R-02 | Antivírus classifica o BoostCore como PUP/riskware | **Alta** | Alto | Assinatura Authenticode desde o primeiro release, sem PowerShell/`cmd`, sem packers/ofuscação, submissão a Microsoft/AV para whitelisting, comportamento sempre precedido de consentimento | Detecção em VirusTotal no primeiro build |
+| R-02 | Antivírus classifica o eloBoost como PUP/riskware | **Alta** | Alto | Assinatura Authenticode desde o primeiro release, sem PowerShell/`cmd`, sem packers/ofuscação, submissão a Microsoft/AV para whitelisting, comportamento sempre precedido de consentimento | Detecção em VirusTotal no primeiro build |
 | R-03 | Plumbing COM/WMI em Rust consome mais tempo que o estimado | Média | Médio | Encapsular cedo em `system/wmi.rs`, usar a crate `wmi` onde couber, timebox de 2d por integração antes de reavaliar | Épico 1 estourando prazo |
 | R-04 | Playwright instável sobre WebView2 | Média | Baixo | E2E é `P3`; a cobertura real vem de Vitest+RTL com backend mockado na camada `services/` | — |
 | R-05 | `SRSetRestorePoint` falha silenciosamente (Proteção do Sistema desativada, limite de 24h, Home Edition) | **Alta** | Médio | Verificar pré-condições **antes** de prometer o ponto; se indisponível, informar e deixar o usuário decidir entre prosseguir sem ponto ou cancelar; nunca ativar a proteção sem consentimento | Testes em VM com proteção desativada |
@@ -28,7 +28,7 @@ Status: **Entrega 1 — planejamento**.
 | # | Risco | Mitigação |
 |---|---|---|
 | R-15 | Usuário espera "ganho de FPS" e se frustra | Comunicação honesta desde o onboarding; métricas reais antes/depois; nenhuma promessa numérica |
-| R-16 | Percepção de "mais um limpador duvidoso" | Transparência radical: caminhos analisados visíveis, critérios de saúde abertos, "o que o BoostCore nunca faz" na tela Sobre, sem pop-ups de venda |
+| R-16 | Percepção de "mais um limpador duvidoso" | Transparência radical: caminhos analisados visíveis, critérios de saúde abertos, "o que o eloBoost nunca faz" na tela Sobre, sem pop-ups de venda |
 | R-17 | Usuário limpa cookies e perde sessões | Cookies nunca marcados por padrão; aviso explícito; separação clara entre cache e dados de sessão |
 | R-18 | Usuário desativa algo essencial na inicialização | Itens protegidos bloqueados; avisos críticos; reversão em um clique no histórico |
 | R-19 | Escopo cresce indefinidamente | Escopos MVP/1.0/futuro fechados no doc 09; Laboratório isola experimentos |
@@ -50,10 +50,10 @@ Estas mudam a arquitetura ou o comportamento do produto; não avanço sem sua re
 
 | # | Decisão | Recomendação | Alternativa |
 |---|---|---|---|
-| **D-1** | **Broker elevado como binário separado** (`BoostCore.Elevator.exe`) | **Sim** — é o único jeito de cumprir "elevação por operação" sem rodar o app inteiro como admin. Custo: 2º binário, 2º certificado, ~6 dias (Épico 7) | App inteiro elevado (viola o requisito 17) ou funções admin removidas do escopo |
+| **D-1** | **Broker elevado como binário separado** (`eloBoost.Elevator.exe`) | **Sim** — é o único jeito de cumprir "elevação por operação" sem rodar o app inteiro como admin. Custo: 2º binário, 2º certificado, ~6 dias (Épico 7) | App inteiro elevado (viola o requisito 17) ou funções admin removidas do escopo |
 | **D-2** | **Lixeira por padrão** para categorias de risco médio e `downloads_old` | **Sim** — torna erros reversíveis de fato. Cache/temp de risco baixo continuam indo direto | Exclusão definitiva sempre (mais espaço liberado imediato, sem rede de proteção) |
 | **D-3** | **Idioma inicial** | pt-BR como padrão, estrutura i18n pronta desde o Épico 0, en-US completo na v1.0 | Só pt-BR (mais rápido, retrabalho depois) |
-| **D-4** | **Nome definitivo** — "BoostCore" é provisório e o repositório se chama `eloBoost` | Definir agora, antes de eu gerar ícones, bundle identifier (`com.<algo>.boostcore`) e textos | Manter provisório e renomear depois (retrabalho em instalador/assinatura) |
+| **D-4** | ~~Nome definitivo~~ **RESOLVIDO** | **eloBoost** é o nome oficial do produto. Bundle identifier: `com.eloboost.app`. Crate compartilhado: `elo-core`. Aplicado em todo o repositório. | — |
 | **D-5** | **Gerenciador de pacotes** | pnpm (lockfile determinístico, mais rápido) | npm |
 | **D-6** | **Alvo de compatibilidade** | Windows 10 build 19041+ e Windows 11 | Incluir builds mais antigos (aumenta matriz de teste e limita APIs) |
 | **D-7** | **Ordem de entrega** | Seguir o doc 09 (Fundação → PathGuard → Sistema → Limpeza) | Priorizar telas visuais antes do backend (entrega uma demo mais cedo, mas com dados mock — contra o requisito de "não criar apenas protótipo visual") |

@@ -116,7 +116,7 @@ eloBoost/
 │   │   ├── globals.css
 │   │   └── theme.css                → tokens CSS do design system
 │   └── assets/
-│       ├── logo/                    → identidade PRÓPRIA do BoostCore
+│       ├── logo/                    → identidade PRÓPRIA do eloBoost
 │       └── illustrations/
 │
 ├── src-tauri/                                        # Backend Rust
@@ -197,7 +197,7 @@ eloBoost/
 │       └── ops/{registry,restore_point,service,task,power}.rs
 │
 ├── crates/
-│   └── boostcore-core/              → tipos e validações compartilhados entre app e elevator
+│   └── elo-core/              → tipos e validações compartilhados entre app e elevator
 │
 └── tests/
     ├── e2e/                         [1.0] Playwright
@@ -209,7 +209,7 @@ eloBoost/
 1. **`src-elevator` é um crate separado**, não um módulo — isso garante que código sem
    necessidade de privilégio não possa acidentalmente rodar elevado, e permite auditar o binário
    privilegiado isoladamente (ele será pequeno: estimativa < 1500 linhas).
-2. **`crates/boostcore-core`** contém as validações de caminho e os tipos de operação, para que a
+2. **`crates/elo-core`** contém as validações de caminho e os tipos de operação, para que a
    revalidação do lado elevado use exatamente o mesmo código testado — sem divergência.
 3. **`system/ffi.rs` concentra todo `unsafe`.** O restante do crate declara
    `#![forbid(unsafe_code)]` por módulo onde possível; a revisão de segurança foca em um arquivo.
