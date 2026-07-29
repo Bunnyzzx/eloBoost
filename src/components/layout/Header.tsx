@@ -1,4 +1,4 @@
-import { Moon, Shield, Sun } from 'lucide-react';
+import { ChevronRight, Moon, Shield, Sun } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 import { Badge } from '@/components/ui/Badge';
@@ -57,12 +57,21 @@ export function Header() {
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-subtle bg-surface px-6">
-      <div className="min-w-0">
-        <h1 className="truncate text-sm font-semibold text-fg">{current?.label ?? 'eloBoost'}</h1>
-        {current != null && (
-          <p className="truncate text-[0.75rem] text-fg-muted">{current.description}</p>
-        )}
-      </div>
+      {/* Trilha de contexto — o título da página é o <h1> do próprio conteúdo,
+          para que cada tela tenha exatamente um cabeçalho de primeiro nível. */}
+      <nav aria-label="Você está em" className="min-w-0">
+        <ol className="flex items-center gap-1.5 text-[0.8125rem] text-fg-muted">
+          <li>eloBoost</li>
+          {current != null && (
+            <>
+              <li aria-hidden>
+                <ChevronRight className="size-3.5" />
+              </li>
+              <li className="truncate font-medium text-fg-secondary">{current.label}</li>
+            </>
+          )}
+        </ol>
+      </nav>
 
       <div className="flex shrink-0 items-center gap-3">
         <PrivilegeChip />

@@ -37,8 +37,11 @@ export function PlannedFeature({
         title="Esta tela ainda não foi implementada"
         description={
           <>
-            <p>A navegação e o design system já estão prontos. Quando esta etapa for concluída, aqui você verá:</p>
-            <ul className="mx-auto mt-3 max-w-md list-inside list-disc space-y-1 text-left text-fg-secondary">
+            <p>
+              A navegação e o design system já estão prontos. Quando esta etapa for
+              concluída, aqui você verá:
+            </p>
+            <ul className="mx-auto mt-4 max-w-md list-disc space-y-1.5 pl-5 text-left text-fg-secondary marker:text-accent">
               {scope.map((item) => (
                 <li key={item}>{item}</li>
               ))}

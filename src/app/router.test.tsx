@@ -42,14 +42,14 @@ describe('navegação do aplicativo', () => {
 
   it('renderiza o dashboard na rota raiz', () => {
     renderApp('/');
-    expect(screen.getByRole('heading', { level: 2, name: 'Início' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Início' })).toBeInTheDocument();
   });
 
   it('navega para a limpeza ao clicar no item da barra lateral', async () => {
     renderApp('/');
 
     await userEvent.click(screen.getByRole('link', { name: 'Limpeza' }));
-    expect(screen.getByRole('heading', { level: 2, name: 'Limpeza' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Limpeza' })).toBeInTheDocument();
   });
 
   it('marca a rota ativa com aria-current para leitores de tela', () => {
@@ -68,12 +68,19 @@ describe('navegação do aplicativo', () => {
 
   it('redireciona rota desconhecida para o início em vez de tela em branco', () => {
     renderApp('/rota-que-nao-existe');
-    expect(screen.getByRole('heading', { level: 2, name: 'Início' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Início' })).toBeInTheDocument();
   });
 
-  it('exibe o título da rota atual no cabeçalho', () => {
+  it('exibe a trilha de contexto da rota atual no cabeçalho', () => {
     renderApp(ROUTES.about);
-    expect(screen.getByRole('heading', { level: 1, name: 'Sobre' })).toBeInTheDocument();
+
+    const breadcrumb = screen.getByRole('navigation', { name: 'Você está em' });
+    expect(within(breadcrumb).getByText('Sobre')).toBeInTheDocument();
+  });
+
+  it('mantém exatamente um <h1> por tela', () => {
+    renderApp(ROUTES.cleanup);
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
   });
 });
 

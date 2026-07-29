@@ -87,13 +87,14 @@ export default tseslint.config(
     },
   },
 
-  // Arquivos de configuração rodam em Node.
+  // Arquivos de configuração e scripts de apoio rodam em Node.
   {
-    files: ['*.config.{ts,js}', 'eslint.config.js'],
+    files: ['*.config.{ts,js}', 'eslint.config.js', 'scripts/**/*.mjs'],
     languageOptions: {
       globals: globals.node,
     },
     rules: {
+      'no-console': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
