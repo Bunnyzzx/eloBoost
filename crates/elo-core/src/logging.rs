@@ -142,7 +142,8 @@ mod tests {
 
     #[test]
     fn nivel_padrao_depende_do_perfil_de_compilacao() {
-        let config = LoggingConfig::new("/tmp/eloboost-teste");
+        let dir = tempfile::tempdir().expect("tempdir");
+        let config = LoggingConfig::new(dir.path());
         if cfg!(debug_assertions) {
             assert_eq!(config.level, LogLevel::Debug);
         } else {

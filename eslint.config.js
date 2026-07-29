@@ -84,6 +84,10 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       'no-restricted-imports': 'off',
+      // O Tauri rejeita com o OperationError já serializado — um objeto simples,
+      // não uma instância de Error. Os testes precisam simular isso fielmente,
+      // senão validariam um formato que o backend nunca produz.
+      '@typescript-eslint/prefer-promise-reject-errors': 'off',
     },
   },
 

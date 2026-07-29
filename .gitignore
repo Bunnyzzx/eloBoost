@@ -1,42 +1,93 @@
+# ─────────────────────────────────────────────────────────────
 # Dependências
+# ─────────────────────────────────────────────────────────────
 node_modules/
 .pnpm-store/
+.yarn/
+.npm/
 
-# Build
+# ─────────────────────────────────────────────────────────────
+# Build da interface
+# ─────────────────────────────────────────────────────────────
 dist/
 dist-ssr/
+.vite/
+*.tsbuildinfo
+
+# ─────────────────────────────────────────────────────────────
+# Build do Rust
+# ─────────────────────────────────────────────────────────────
 target/
-*.local
-
-# Testes
-coverage/
-.vitest/
-
-# Rust
 **/*.rs.bk
+*.pdb
 
-# Gerado pelo tauri-build a cada compilação
+# Gerado pelo tauri-build a cada compilação (schemas de capabilities).
 src-tauri/gen/
 
-# Ambiente
+# Imagem de origem dos ícones: reproduzível com `pnpm icons`.
+# Os ícones finais (PNG/ICO) são versionados porque entram no instalador.
+src-tauri/icons/source.png
+
+# ─────────────────────────────────────────────────────────────
+# Testes e relatórios
+# ─────────────────────────────────────────────────────────────
+coverage/
+.vitest/
+test-results/
+playwright-report/
+.nyc_output/
+
+# ─────────────────────────────────────────────────────────────
+# Segredos e ambiente
+#
+# Nenhum segredo deve existir neste repositório. Estas regras são uma rede de
+# proteção, não uma autorização para versionar credenciais em outro formato.
+# ─────────────────────────────────────────────────────────────
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+secrets.json
+*.tauri-key
+.tauri/
 
-# Editores
+# ─────────────────────────────────────────────────────────────
+# Dados locais do eloBoost em desenvolvimento
+# ─────────────────────────────────────────────────────────────
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+logs/
+*.log
+
+# ─────────────────────────────────────────────────────────────
+# Editores e ferramentas
+# ─────────────────────────────────────────────────────────────
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea/
 *.swp
 *.swo
+*~
 
+# ─────────────────────────────────────────────────────────────
 # Sistema operacional
+# ─────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
 
-# Artefatos locais do eloBoost em desenvolvimento
-*.db
-*.db-wal
-*.db-shm
-logs/
+# ─────────────────────────────────────────────────────────────
+# Diversos
+# ─────────────────────────────────────────────────────────────
+*.local
+.cache/
+tmp/
