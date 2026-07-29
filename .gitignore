@@ -15,6 +15,9 @@ coverage/
 # Rust
 **/*.rs.bk
 
+# Gerado pelo tauri-build a cada compilação
+src-tauri/gen/
+
 # Ambiente
 .env
 .env.*
