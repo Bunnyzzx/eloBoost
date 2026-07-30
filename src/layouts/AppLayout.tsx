@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import { ErrorBoundary } from '@/components/feedback/ErrorBoundary';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { PageTransition } from '@/components/motion/PageTransition';
 import { useUiStore } from '@/stores/uiStore';
 
 /** Abaixo desta largura a barra lateral recolhe sozinha (docs/08 §2). */
@@ -11,6 +12,7 @@ const COLLAPSE_BREAKPOINT_PX = 1100;
 
 export function AppLayout() {
   const setSidebarCollapsed = useUiStore((state) => state.setSidebarCollapsed);
+  const { pathname } = useLocation();
 
   // Recolhe automaticamente em janelas estreitas (1280×720 continua confortável).
   useEffect(() => {
@@ -40,7 +42,10 @@ export function AppLayout() {
           <div className="mx-auto w-full max-w-[1440px] px-6 py-6">
             {/* Um erro em uma página não derruba a navegação. */}
             <ErrorBoundary area="conteúdo principal">
-              <Outlet />
+              {/* A `key` do pathname troca a árvore; só a tela nova é animada. */}
+              <PageTransition routeKey={pathname}>
+                <Outlet />
+              </PageTransition>
             </ErrorBoundary>
           </div>
         </main>

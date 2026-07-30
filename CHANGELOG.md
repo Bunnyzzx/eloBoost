@@ -48,9 +48,27 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - `unsafe_code = "forbid"` nos dois crates Rust.
 - Nenhuma dependência capaz de executar processos externos foi adicionada ao projeto.
 
+**Camada de animações e microinterações**
+
+- Tokens centralizados de duração, easing e intensidade, espelhados entre TypeScript e CSS, com
+  teste que falha se as duas metades divergirem.
+- Transição de entrada de página com fade e deslocamento vertical sutil, sem animação de saída —
+  evita piscada e telas duplicadas chamando o backend.
+- Entrada escalonada de cards (40 ms por item, teto em 6) e elevação de 1 px no hover de cards
+  interativos, sem deslocar o layout.
+- Feedback de pressionar nos botões e estado desabilitado inequívoco.
+- Barra lateral com transição de largura, rótulos que saem por opacidade sem desmontar, e
+  destaque do item ativo que desliza entre itens.
+- Componentes novos: `Spinner`, `ProgressBar`, `Meter` (reutilizável para CPU, memória, disco e
+  rede), `PageTransition`, `StaggerItem`, `Reveal`, e variantes de skeleton `SkeletonText`,
+  `SkeletonMeter`, `SkeletonRow`.
+- Uma única animação contínua no sistema: a barra de progresso indeterminada.
+- Suporte a `prefers-reduced-motion` do sistema e à configuração interna, com validação em
+  navegador real (`pnpm check:motion`).
+
 **Qualidade**
 
-- 57 testes de frontend e 40 de backend.
+- 100 testes de frontend e 53 de backend.
 - CI com verificação de tipos, lint, testes e build, em Linux e Windows.
 
 ### Observações

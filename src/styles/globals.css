@@ -40,8 +40,7 @@
   --shadow-elo-md: var(--elo-shadow-md);
   --shadow-elo-lg: var(--elo-shadow-lg);
 
-  --font-sans:
-    Inter, 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-sans: Inter, 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-mono: 'Cascadia Mono', 'Consolas', ui-monospace, monospace;
 
   --ease-elo: var(--elo-ease);
@@ -133,13 +132,28 @@
     position: absolute;
     inset: 0;
     transform: translateX(-100%);
-    background-image: linear-gradient(
-      90deg,
-      transparent,
-      rgb(255 255 255 / 4%),
-      transparent
-    );
+    background-image: linear-gradient(90deg, transparent, rgb(255 255 255 / 4%), transparent);
     animation: elo-shimmer 1.6s infinite;
+  }
+
+  /**
+   * Progresso indeterminado.
+   *
+   * A única animação contínua do design system, reservada a operações cujo
+   * total é genuinamente desconhecido. Anima apenas `transform`, então roda no
+   * compositor sem provocar layout ou paint.
+   */
+  @keyframes elo-indeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(300%);
+    }
+  }
+
+  .elo-indeterminate {
+    animation: elo-indeterminate 1.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 }
 

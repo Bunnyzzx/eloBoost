@@ -2,6 +2,7 @@ import { Ban, Database, Info, ShieldCheck } from 'lucide-react';
 
 import { ErrorState } from '@/components/feedback/ErrorState';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { StaggerItem } from '@/components/motion/Stagger';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -168,48 +169,58 @@ export function AboutPage() {
         description="Versão, diagnóstico local e os compromissos que o eloBoost assume com você."
       />
 
-      <div className="grid gap-5 lg:grid-cols-2">
-        <AppInfoCard />
-        <DatabaseCard />
+      <div className="grid items-start gap-5 lg:grid-cols-2">
+        <StaggerItem index={0}>
+          <AppInfoCard />
+        </StaggerItem>
+        <StaggerItem index={1}>
+          <DatabaseCard />
+        </StaggerItem>
       </div>
 
-      <Card>
-        <CardHeader
-          icon={<Ban className="size-4" />}
-          title="O que o eloBoost nunca faz"
-          description="Estes limites são parte da arquitetura do produto, não apenas uma promessa."
-        />
-        <CardBody>
-          <ul className="space-y-2">
-            {NEVER_DOES.map((item) => (
-              <li key={item} className="flex items-start gap-2.5 text-sm text-fg-secondary">
-                <Ban aria-hidden className="mt-0.5 size-4 shrink-0 text-critical" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </CardBody>
-      </Card>
+      <StaggerItem index={2}>
+        <Card>
+          <CardHeader
+            icon={<Ban className="size-4" />}
+            title="O que o eloBoost nunca faz"
+            description="Estes limites são parte da arquitetura do produto, não apenas uma promessa."
+          />
+          <CardBody>
+            <ul className="space-y-2">
+              {NEVER_DOES.map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-fg-secondary">
+                  <Ban aria-hidden className="mt-0.5 size-4 shrink-0 text-critical" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </CardBody>
+        </Card>
+      </StaggerItem>
 
-      <Card>
-        <CardHeader
-          icon={<ShieldCheck className="size-4" />}
-          title="Como o eloBoost protege seus dados"
-          description="Resumo do modelo de segurança documentado no repositório."
-        />
-        <CardBody>
-          <ul className="space-y-2 text-sm text-fg-secondary">
-            <li>• Toda alteração de configuração cria um backup antes de ser aplicada.</li>
-            <li>• Nenhum arquivo é removido sem análise prévia e confirmação explícita.</li>
-            <li>
-              • A interface não constrói caminhos de arquivo: ela só manipula identificadores
-              devolvidos pelo backend.
-            </li>
-            <li>• A elevação de privilégio é pedida por operação, com explicação antes do UAC.</li>
-            <li>• Os logs não registram senhas, tokens nem conteúdo de arquivos.</li>
-          </ul>
-        </CardBody>
-      </Card>
+      <StaggerItem index={3}>
+        <Card>
+          <CardHeader
+            icon={<ShieldCheck className="size-4" />}
+            title="Como o eloBoost protege seus dados"
+            description="Resumo do modelo de segurança documentado no repositório."
+          />
+          <CardBody>
+            <ul className="space-y-2 text-sm text-fg-secondary">
+              <li>• Toda alteração de configuração cria um backup antes de ser aplicada.</li>
+              <li>• Nenhum arquivo é removido sem análise prévia e confirmação explícita.</li>
+              <li>
+                • A interface não constrói caminhos de arquivo: ela só manipula identificadores
+                devolvidos pelo backend.
+              </li>
+              <li>
+                • A elevação de privilégio é pedida por operação, com explicação antes do UAC.
+              </li>
+              <li>• Os logs não registram senhas, tokens nem conteúdo de arquivos.</li>
+            </ul>
+          </CardBody>
+        </Card>
+      </StaggerItem>
     </div>
   );
 }

@@ -23,9 +23,7 @@ describe('Modal', () => {
     render(
       <Modal open onClose={vi.fn()} title="Título" description="Serão removidos 10 arquivos." />,
     );
-    expect(screen.getByRole('dialog')).toHaveAccessibleDescription(
-      'Serão removidos 10 arquivos.',
-    );
+    expect(screen.getByRole('dialog')).toHaveAccessibleDescription('Serão removidos 10 arquivos.');
   });
 
   it('fecha com Esc quando dispensável', async () => {
@@ -71,9 +69,7 @@ describe('Modal', () => {
   });
 
   it('move o foco para o primeiro elemento focável ao abrir', () => {
-    render(
-      <Modal open onClose={vi.fn()} title="Título" footer={<Button>Confirmar</Button>} />,
-    );
+    render(<Modal open onClose={vi.fn()} title="Título" footer={<Button>Confirmar</Button>} />);
     expect(screen.getByRole('dialog').contains(document.activeElement)).toBe(true);
   });
 });

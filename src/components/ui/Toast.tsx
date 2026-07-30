@@ -5,21 +5,23 @@ import { useEffect, type ReactNode } from 'react';
 import { useUiStore, type Toast as ToastData, type ToastTone } from '@/stores/uiStore';
 import { cn } from '@/utils/cn';
 
-const TONE_CONFIG: Record<ToastTone, { icon: ReactNode; accent: string; role: 'status' | 'alert' }> =
-  {
-    info: { icon: <Info className="size-4" />, accent: 'text-accent', role: 'status' },
-    success: {
-      icon: <CheckCircle2 className="size-4" />,
-      accent: 'text-ok',
-      role: 'status',
-    },
-    warning: {
-      icon: <AlertTriangle className="size-4" />,
-      accent: 'text-attention',
-      role: 'alert',
-    },
-    error: { icon: <XCircle className="size-4" />, accent: 'text-critical', role: 'alert' },
-  };
+const TONE_CONFIG: Record<
+  ToastTone,
+  { icon: ReactNode; accent: string; role: 'status' | 'alert' }
+> = {
+  info: { icon: <Info className="size-4" />, accent: 'text-accent', role: 'status' },
+  success: {
+    icon: <CheckCircle2 className="size-4" />,
+    accent: 'text-ok',
+    role: 'status',
+  },
+  warning: {
+    icon: <AlertTriangle className="size-4" />,
+    accent: 'text-attention',
+    role: 'alert',
+  },
+  error: { icon: <XCircle className="size-4" />, accent: 'text-critical', role: 'alert' },
+};
 
 function ToastItem({ toast }: { toast: ToastData }) {
   const dismissToast = useUiStore((state) => state.dismissToast);

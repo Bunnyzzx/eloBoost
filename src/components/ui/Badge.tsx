@@ -41,10 +41,7 @@ export function Badge({ tone = 'neutral', icon, children, className }: BadgeProp
   );
 }
 
-const RISK_CONFIG: Record<
-  RiskLevel,
-  { tone: BadgeTone; label: string; icon: ReactNode }
-> = {
+const RISK_CONFIG: Record<RiskLevel, { tone: BadgeTone; label: string; icon: ReactNode }> = {
   low: { tone: 'ok', label: 'Baixo risco', icon: <ShieldCheck className="size-3.5" /> },
   medium: { tone: 'attention', label: 'Médio risco', icon: <CircleAlert className="size-3.5" /> },
   high: { tone: 'critical', label: 'Alto risco', icon: <AlertTriangle className="size-3.5" /> },

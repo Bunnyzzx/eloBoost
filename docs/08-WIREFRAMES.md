@@ -64,10 +64,38 @@ em toda métrica, para não "dançar" durante atualizações em tempo real.
 - Raio: `8px` (controles), `14px` (cards), `20px` (modais).
 - Sombras suaves e frias: `0 1px 2px #0006, 0 8px 24px #0004`.
 - Ícones: Lucide, traço 1.5px, 20px padrão.
-- Movimento: 150–220 ms, `cubic-bezier(0.2, 0, 0, 1)`. Entradas com `fade + 4px translateY`.
-  Todo movimento respeita `prefers-reduced-motion` **e** a configuração interna "reduzir animações".
 - **Nada pulsa, brilha ou faz contagem regressiva falsa.** Barras de progresso refletem trabalho
   real; se não sabemos o total, usamos indeterminado honesto.
+
+#### Camada de movimento
+
+Tokens em `src/constants/motion.ts` e `src/styles/theme.css` — as duas metades da mesma fonte de
+verdade, com um teste que falha se divergirem.
+
+| Token | Valor | Uso |
+|---|---|---|
+| `instant` | 120 ms | hover, pressionar, troca de cor |
+| `base` | 180 ms | entrada de elemento, fade, transição de página |
+| `slow` | 240 ms | recolher a barra lateral, abrir modal |
+| `ease` | `cubic-bezier(0.2, 0, 0, 1)` | único easing do sistema, sem overshoot |
+| `offset.subtle` | 6 px | entrada de card |
+| `offset.page` | 8 px | entrada de página e de seção |
+| stagger | 40 ms/item, teto em 6 | entrada escalonada |
+
+Regras:
+
+- **Faixa de 120–250 ms.** Nada mais lento; a última animação de uma tela termina em 420 ms.
+- **Nenhuma animação bloqueia interação.** Nada recebe `pointer-events: none` durante a entrada.
+- **Nenhuma animação desloca o layout.** Elevação de card e entradas usam `transform`, que não
+  participa do fluxo; o indicador do item ativo é posicionado em absoluto.
+- **Uma única animação contínua** em todo o sistema: a barra de progresso indeterminada, reservada
+  a operações cujo total é genuinamente desconhecido. Barra com valor conhecido só anima quando o
+  valor muda.
+- **Sem animação de saída de página.** Animar a saída exigiria manter a tela antiga montada, o que
+  produz piscada, salto de rolagem e duas telas chamando o backend ao mesmo tempo.
+- Todo movimento respeita `prefers-reduced-motion` **e** a configuração interna "reduzir
+  animações": qualquer uma das duas remove deslocamentos e zera transições. Opacidade e cor
+  permanecem, e nenhum estado é comunicado só por movimento.
 
 ---
 

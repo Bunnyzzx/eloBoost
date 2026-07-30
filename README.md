@@ -124,13 +124,22 @@ pnpm verify:rust      # cargo fmt --check + clippy -D warnings + cargo test
 # Individualmente
 pnpm typecheck
 pnpm lint
-pnpm test             # 70 testes do frontend
+pnpm test             # 100 testes do frontend
 pnpm test:watch
 pnpm test:coverage
 
 cargo test --workspace --all-features   # 53 testes do backend
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo fmt --all --check
+```
+
+Validação da camada de animações num navegador real — navegação rápida, ausência de deslocamento
+de layout, barra lateral recolhida funcional e `prefers-reduced-motion` efetivo:
+
+```bash
+pnpm build
+pnpm preview --port 4173 &
+pnpm check:motion
 ```
 
 **Nenhum teste toca pastas reais do Windows nem o registro.** Os testes do banco usam SQLite em

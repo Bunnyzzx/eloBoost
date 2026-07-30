@@ -53,11 +53,20 @@
   --elo-radius-card: 14px;
   --elo-radius-modal: 20px;
 
-  /* ── Movimento ── */
+  /* ── Movimento ──
+     Espelha src/constants/motion.ts. Os dois devem mudar juntos; o teste
+     motion.test.ts falha se divergirem.
+
+     Faixa deliberada de 120–250 ms: rápido o bastante para o app parecer
+     imediato, longo o bastante para o olho acompanhar. */
   --elo-ease: cubic-bezier(0.2, 0, 0, 1);
-  --elo-duration-fast: 150ms;
-  --elo-duration-base: 200ms;
-  --elo-duration-slow: 320ms;
+  --elo-duration-instant: 120ms;
+  --elo-duration-base: 180ms;
+  --elo-duration-slow: 240ms;
+
+  /* Intensidade dos deslocamentos de entrada. */
+  --elo-offset-subtle: 6px;
+  --elo-offset-page: 8px;
 
   /* ── Escala da interface (configurável em Configurações, 90%–130%) ── */
   --elo-ui-scale: 1;

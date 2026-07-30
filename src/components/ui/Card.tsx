@@ -7,15 +7,38 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   elevated?: boolean;
   /** Realce sutil da borda, para o card em foco da tela. */
   highlighted?: boolean;
+  /**
+   * Reage ao ponteiro: borda mais clara e elevação de 1 px.
+   *
+   * Use apenas em cards que o usuário pode acionar. Um card informativo que
+   * responde ao mouse sem ter ação sugere clique onde não há nenhum.
+   */
+  interactive?: boolean;
 }
 
-export function Card({ elevated, highlighted, className, children, ...rest }: CardProps) {
+export function Card({
+  elevated,
+  highlighted,
+  interactive = false,
+  className,
+  children,
+  ...rest
+}: CardProps) {
   return (
     <div
       className={cn(
-        'rounded-card border transition-colors duration-200 ease-elo',
+        'rounded-card border',
+        // Só cor e sombra fazem parte da transição base: animar `transform`
+        // aqui faria o card tremer durante a entrada escalonada.
+        'transition-[background-color,border-color,box-shadow] duration-(--elo-duration-instant) ease-elo',
         elevated ? 'bg-elevated' : 'bg-surface',
         highlighted ? 'border-accent/45 shadow-elo-md' : 'border-subtle shadow-elo-sm',
+        interactive && [
+          'cursor-default hover:border-strong hover:shadow-elo-md',
+          // 1 px é o suficiente para o card "levantar" sem deslocar o texto
+          // vizinho nem provocar reflow — a translação não afeta o layout.
+          'hover:-translate-y-px motion-safe:transition-transform',
+        ],
         className,
       )}
       {...rest}

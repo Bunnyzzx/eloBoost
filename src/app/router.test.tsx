@@ -83,4 +83,3 @@ describe('navegação do aplicativo', () => {
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
   });
 });
-

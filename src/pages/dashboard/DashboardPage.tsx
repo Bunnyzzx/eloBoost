@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 
 import { ErrorState } from '@/components/feedback/ErrorState';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { StaggerItem } from '@/components/motion/Stagger';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -142,38 +143,42 @@ export function DashboardPage() {
         description="Aqui ficará a visão geral do computador: saúde do sistema, uso de recursos e o resultado da análise."
       />
 
-      <div className="grid gap-5 lg:grid-cols-2">
-        <CoreStatusCard />
+      <div className="grid items-start gap-5 lg:grid-cols-2">
+        <StaggerItem index={0}>
+          <CoreStatusCard />
+        </StaggerItem>
 
-        <Card>
-          <CardHeader
-            icon={<Gauge className="size-4" />}
-            title="Saúde do sistema"
-            description="Indicador com critérios transparentes, baseado em dados reais do computador."
-          />
-          <CardBody>
-            <div className="rounded-[10px] border border-dashed border-strong bg-base/40 px-4 py-5 text-center">
-              <p className="text-sm text-fg-secondary">
-                Ainda não implementado. Os critérios de saúde dependem da leitura real do sistema.
-              </p>
-              <p className="mt-2 text-[0.75rem] text-fg-muted">
-                Planejado para: Épico 1 (informações do sistema) e Épico 5 (motor de saúde)
-              </p>
-            </div>
+        <StaggerItem index={1}>
+          <Card>
+            <CardHeader
+              icon={<Gauge className="size-4" />}
+              title="Saúde do sistema"
+              description="Indicador com critérios transparentes, baseado em dados reais do computador."
+            />
+            <CardBody>
+              <div className="rounded-[10px] border border-dashed border-strong bg-base/40 px-4 py-5 text-center">
+                <p className="text-sm text-fg-secondary">
+                  Ainda não implementado. Os critérios de saúde dependem da leitura real do sistema.
+                </p>
+                <p className="mt-2 text-[0.75rem] text-fg-muted">
+                  Planejado para: Épico 1 (informações do sistema) e Épico 5 (motor de saúde)
+                </p>
+              </div>
 
-            <ul className="mt-4 space-y-1.5 text-[0.8125rem] text-fg-secondary">
-              <li>• Espaço livre em disco</li>
-              <li>• Quantidade de programas na inicialização</li>
-              <li>• Arquivos temporários acumulados</li>
-              <li>• Existência de ponto de restauração recente</li>
-              <li>• Uso anormal de recursos</li>
-            </ul>
-            <p className="mt-3 text-[0.75rem] text-fg-muted">
-              Cada critério exibirá o valor observado e o peso no cálculo. Nenhum número será
-              estimado ou inventado.
-            </p>
-          </CardBody>
-        </Card>
+              <ul className="mt-4 space-y-1.5 text-[0.8125rem] text-fg-secondary">
+                <li>• Espaço livre em disco</li>
+                <li>• Quantidade de programas na inicialização</li>
+                <li>• Arquivos temporários acumulados</li>
+                <li>• Existência de ponto de restauração recente</li>
+                <li>• Uso anormal de recursos</li>
+              </ul>
+              <p className="mt-3 text-[0.75rem] text-fg-muted">
+                Cada critério exibirá o valor observado e o peso no cálculo. Nenhum número será
+                estimado ou inventado.
+              </p>
+            </CardBody>
+          </Card>
+        </StaggerItem>
       </div>
     </div>
   );

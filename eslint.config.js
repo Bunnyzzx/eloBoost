@@ -91,11 +91,13 @@ export default tseslint.config(
     },
   },
 
-  // Arquivos de configuração e scripts de apoio rodam em Node.
+  // Arquivos de configuração e scripts de apoio rodam em Node. Os scripts do
+  // Playwright também contêm callbacks avaliados dentro do navegador
+  // (`page.$$eval`), onde valem os globais de browser.
   {
     files: ['*.config.{ts,js}', 'eslint.config.js', 'scripts/**/*.mjs'],
     languageOptions: {
-      globals: globals.node,
+      globals: { ...globals.node, ...globals.browser },
     },
     rules: {
       'no-console': 'off',

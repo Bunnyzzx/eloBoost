@@ -43,10 +43,7 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className={cn(
-        'rounded-card border border-critical/35 bg-critical-soft p-5',
-        className,
-      )}
+      className={cn('rounded-card border border-critical/35 bg-critical-soft p-5', className)}
     >
       <div className="flex items-start gap-3">
         <span aria-hidden className="mt-0.5 shrink-0 text-critical">

@@ -55,9 +55,7 @@ describe('AboutPage — caminho completo até o backend', () => {
 
   it('mostra o caminho do banco já mascarado, sem o nome real da conta', async () => {
     invokeMock.mockImplementation((command: string) =>
-      command === 'app_get_info'
-        ? Promise.resolve(APP_INFO)
-        : Promise.resolve(DATABASE_STATUS),
+      command === 'app_get_info' ? Promise.resolve(APP_INFO) : Promise.resolve(DATABASE_STATUS),
     );
 
     render(<AboutPage />);

@@ -76,10 +76,7 @@ export const useUiStore = create<UiState>((set) => ({
     // Erros não somem sozinhos: o usuário precisa poder copiar o ID de diagnóstico.
     const defaultDuration = toast.tone === 'error' ? null : 5000;
     set((state) => ({
-      toasts: [
-        ...state.toasts,
-        { ...toast, id, durationMs: toast.durationMs ?? defaultDuration },
-      ],
+      toasts: [...state.toasts, { ...toast, id, durationMs: toast.durationMs ?? defaultDuration }],
     }));
     return id;
   },

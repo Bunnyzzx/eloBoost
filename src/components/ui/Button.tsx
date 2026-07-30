@@ -18,12 +18,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary:
-    'bg-accent text-accent-contrast hover:bg-accent-hover active:brightness-95 shadow-elo-sm',
-  secondary:
-    'bg-elevated text-fg border border-strong hover:border-accent hover:bg-accent-soft',
+  primary: 'bg-accent text-accent-contrast hover:bg-accent-hover shadow-elo-sm',
+  secondary: 'bg-elevated text-fg border border-strong hover:border-accent hover:bg-accent-soft',
   ghost: 'bg-transparent text-fg-secondary hover:bg-accent-soft hover:text-fg',
-  danger: 'bg-critical text-white hover:brightness-110 active:brightness-95 shadow-elo-sm',
+  danger: 'bg-critical text-white hover:brightness-110 shadow-elo-sm',
 };
 
 const SIZES: Record<ButtonSize, string> = {
@@ -64,8 +62,23 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       aria-busy={loading || undefined}
       className={cn(
         'inline-flex select-none items-center justify-center font-medium',
-        'transition-[background-color,border-color,color,filter] duration-150 ease-elo',
-        'disabled:cursor-not-allowed disabled:opacity-50',
+        // Transição curta e explícita: nada de `transition-all`, que animaria
+        // também largura e posição e produziria tremor no layout.
+        'transition-[background-color,border-color,color,filter,transform,opacity]',
+        'duration-(--elo-duration-instant) ease-elo',
+
+        // Feedback ao pressionar: 1% de redução, perceptível sem parecer um
+        // botão de jogo. `motion-safe` desliga junto com a preferência do
+        // sistema; a mudança de cor no `:active` permanece nos dois casos.
+        'motion-safe:active:scale-[0.99]',
+        variant === 'primary' || variant === 'danger'
+          ? 'active:brightness-95'
+          : 'active:bg-accent-soft',
+
+        // Estado desabilitado inequívoco: sem hover, sem cursor de ação.
+        'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-45',
+        'disabled:shadow-none disabled:saturate-50',
+
         VARIANTS[variant],
         SIZES[size],
         block && 'w-full',
