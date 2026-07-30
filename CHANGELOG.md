@@ -7,6 +7,38 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Não lançado]
 
+### Adicionado — Épico 1: dashboard com dados reais do sistema
+
+**Backend (somente leitura)**
+
+- `models/availability.rs`: tipo `Availability<T>` que torna impossível apresentar um dado não
+  lido — um campo indisponível carrega o motivo, nunca um zero.
+- `services/`: um arquivo por domínio — `os`, `cpu`, `memory`, `storage`, `gpu`, `privilege`,
+  `app` — orquestrados por `system_service`, com as leituras lentas em paralelo.
+- `system/ffi.rs`: única fronteira Win32 do projeto, com `unsafe` confinado e um comentário
+  `// SAFETY:` por bloco. Lê edição/versão/build do registro, adaptadores via DXGI e o estado de
+  elevação do token — tudo somente leitura.
+- `util/text.rs`: normalização de strings do sistema (terminadores nulos, espaços duplicados).
+- Comandos `system_get_snapshot` e `app_get_runtime_info`.
+
+**Interface**
+
+- Tela Início reescrita como dashboard: processador com núcleos e frequência, memória com uso,
+  placa de vídeo com memória dedicada, tempo ligado, um card por volume, ficha técnica do
+  computador e diagnóstico do aplicativo.
+- Componentes reutilizáveis novos: `StatCard`, `ProgressCard`, `StorageCard`, `InfoRow`/`InfoList`
+  e `StatusBadge`.
+- Botão Atualizar que preserva os dados anteriores na tela durante a recarga, com atenuação
+  discreta em vez de skeletons piscando.
+- `useAsync` passou a distinguir primeira carga de recarga (`isRefreshing`).
+- `utils/status.ts` centraliza os limiares de uso, para que "atenção" signifique o mesmo em
+  memória, disco e CPU.
+
+**Dependências**
+
+- `sysinfo` (multiplataforma) e `windows` (apenas no alvo Windows, features restritas às APIs de
+  leitura efetivamente usadas).
+
 ### Adicionado — Épico 0: infraestrutura
 
 **Interface**
@@ -68,7 +100,7 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 **Qualidade**
 
-- 100 testes de frontend e 53 de backend.
+- 133 testes de frontend e 103 de backend.
 - CI com verificação de tipos, lint, testes e build, em Linux e Windows.
 
 ### Observações

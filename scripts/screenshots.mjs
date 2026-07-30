@@ -46,9 +46,12 @@ const SHOTS = [
 
 await mkdir(outputDir, { recursive: true });
 
-// Remove capturas antigas para que uma tela renomeada não deixe arquivo órfão.
+// Remove apenas as capturas que este script gera, para que uma tela renomeada
+// não deixe arquivo órfão. Capturas produzidas por outros meios — como a do
+// aplicativo real rodando — não são tocadas.
+const managed = new Set(SHOTS.map((shot) => `${shot.name}.png`));
 for (const file of await readdir(outputDir)) {
-  if (file.endsWith('.png')) await unlink(resolve(outputDir, file));
+  if (managed.has(file)) await unlink(resolve(outputDir, file));
 }
 
 const browser = await launchChromium();

@@ -9,12 +9,20 @@ use std::path::PathBuf;
 use elo_core::db::Database;
 use elo_core::errors::{AppError, AppResult, ErrorCode};
 
+use crate::services::system_service::SystemProbe;
+
 /// Estado global registrado no Tauri via `manage`.
 pub struct AppState {
     /// Banco local, já migrado.
     pub database: Database,
     /// Pasta de dados do aplicativo (`%APPDATA%\eloBoost`).
     pub data_dir: PathBuf,
+    /// Sonda de informações do sistema.
+    ///
+    /// Persistida no estado porque o `sysinfo` calcula valores dependentes de
+    /// tempo a partir da diferença entre duas leituras — uma instância nova por
+    /// chamada devolveria zero na frequência da CPU.
+    pub system_probe: SystemProbe,
 }
 
 impl AppState {
@@ -33,7 +41,11 @@ impl AppState {
             error
         })?;
 
-        Ok(Self { database, data_dir })
+        Ok(Self {
+            database,
+            data_dir,
+            system_probe: SystemProbe::new(),
+        })
     }
 
     /// Pasta onde os logs técnicos são gravados.

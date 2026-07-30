@@ -2,10 +2,11 @@
 
 > Utilitário de limpeza, manutenção e otimização **segura** para Windows 10 e 11.
 >
-> **Status: Épico 0 concluído — infraestrutura.** A aplicação abre, navega, tem design system,
-> banco local com migrations e tratamento de erros ponta a ponta. **Nenhuma funcionalidade de
-> limpeza, otimização ou acesso ao registro foi implementada** — as telas correspondentes declaram
-> isso explicitamente, sem dados simulados.
+> **Status: Épico 1 — dashboard com dados reais.** A tela Início lê informações verdadeiras do
+> computador (sistema, CPU, memória, GPU, volumes, tempo ligado, privilégio) diretamente do backend
+> Rust. **Nenhuma funcionalidade de limpeza, otimização ou escrita no registro foi implementada** —
+> o acesso ao sistema é somente leitura, e as telas ainda não implementadas declaram isso
+> explicitamente, sem dados simulados.
 
 ---
 
@@ -32,16 +33,16 @@ monitoramento e ajustes de desempenho — com três compromissos inegociáveis:
 
 ## Capturas de tela
 
-| Início | Sobre |
-| --- | --- |
-| ![Início](screenshots/01-inicio.png) | ![Sobre](screenshots/12-sobre.png) |
+O dashboard, com dados reais lidos do sistema:
 
-| Limpeza (ainda não implementada) | Tema claro |
-| --- | --- |
-| ![Limpeza](screenshots/02-limpeza.png) | ![Tema claro](screenshots/13-tema-claro.png) |
+![Dashboard com dados reais](screenshots/19-inicio-aplicativo-real.png)
 
-As 18 capturas de `screenshots/` cobrem as 12 telas, os dois temas e as resoluções 1280×720,
-1366×768, 1920×1080 e a barra lateral recolhida.
+| Sobre | Tema claro |
+| --- | --- |
+| ![Sobre](screenshots/12-sobre.png) | ![Tema claro](screenshots/13-tema-claro.png) |
+
+As 19 capturas de `screenshots/` cobrem as 12 telas, os dois temas, as resoluções 1280×720,
+1366×768, 1920×1080, a barra lateral recolhida e o aplicativo real em execução.
 
 Para regenerá-las:
 
@@ -207,11 +208,13 @@ docs/                Planejamento completo (11 documentos)
 
 ## Limitações conhecidas
 
-- **Nenhuma funcionalidade de sistema existe ainda.** Limpeza, otimizações, inicialização,
-  processos, armazenamento e monitoramento estão apenas planejados. As telas dizem isso
-  explicitamente e não exibem números inventados.
+- **Nenhuma funcionalidade que altera o sistema existe.** Limpeza, otimizações, inicialização,
+  processos e aplicativos estão apenas planejados. O Épico 1 entregou somente **leitura**.
 - **O aplicativo ainda não foi executado no Windows.** O ambiente de desenvolvimento atual é
-  Linux; a compilação e os testes passam, mas a validação em Windows real ainda não ocorreu.
+  Linux; a compilação, os testes e a execução passam aqui, mas os campos exclusivos do Windows
+  (edição, versão comercial, GPU via DXGI, estado de elevação) só podem ser validados naquela
+  plataforma. Fora do Windows eles aparecem como "informação não suportada neste dispositivo" —
+  que é o comportamento correto, e não um defeito.
 - **Sensores de temperatura e ventoinha** não serão suportados sem driver em modo kernel — o
   aplicativo exibirá "Informação não suportada neste dispositivo" em vez de estimar valores.
 - **O instalador ainda não é assinado.** O pipeline de assinatura Authenticode está previsto para
@@ -230,6 +233,7 @@ docs/                Planejamento completo (11 documentos)
 
 ## Próxima etapa
 
-**Épico 1 — Informações reais do sistema** (SO, CPU, memória, discos, GPU, uptime), conforme
-[`docs/09-BACKLOG-E-ROADMAP.md`](docs/09-BACKLOG-E-ROADMAP.md). Depende de uma máquina Windows
-para validação das APIs nativas.
+**Épico 2 — Segurança de caminhos (`PathGuard`)**, conforme
+[`docs/09-BACKLOG-E-ROADMAP.md`](docs/09-BACKLOG-E-ROADMAP.md). É pré-requisito inegociável do
+Épico 3 (limpeza): nenhuma função que remove arquivos é escrita antes de a camada de proteção
+existir e estar testada.

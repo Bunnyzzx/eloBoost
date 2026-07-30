@@ -24,6 +24,14 @@ tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 tracing-appender = "0.2"
 rusqlite = { version = "0.37", features = ["bundled"] }
 
+# Leitura de informações do sistema. Multiplataforma: dá dados reais tanto no
+# Windows (alvo do produto) quanto no Linux (ambiente de desenvolvimento), o que
+# permite verificar a implementação sem depender de valores simulados.
+sysinfo = { version = "0.39", default-features = false, features = [
+  "system",
+  "disk",
+] }
+
 [profile.release]
 # Binário pequeno importa: um utilitário de otimização não pode ser pesado.
 opt-level = "s"

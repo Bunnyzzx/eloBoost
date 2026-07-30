@@ -10,6 +10,9 @@ import { CleanupPage } from '@/pages/cleanup/CleanupPage';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
 
+/** O título do dashboard depende da hora local. */
+const SAUDACAO = /^(Bom dia|Boa tarde|Boa noite)/;
+
 /**
  * Monta um subconjunto do roteador real dentro de um MemoryRouter.
  * O objetivo é validar layout + navegação, não reimplementar o router.tsx.
@@ -42,7 +45,8 @@ describe('navegação do aplicativo', () => {
 
   it('renderiza o dashboard na rota raiz', () => {
     renderApp('/');
-    expect(screen.getByRole('heading', { level: 1, name: 'Início' })).toBeInTheDocument();
+    // O dashboard abre com a saudação do momento, não com o rótulo da rota.
+    expect(screen.getByRole('heading', { level: 1, name: SAUDACAO })).toBeInTheDocument();
   });
 
   it('navega para a limpeza ao clicar no item da barra lateral', async () => {
@@ -68,7 +72,7 @@ describe('navegação do aplicativo', () => {
 
   it('redireciona rota desconhecida para o início em vez de tela em branco', () => {
     renderApp('/rota-que-nao-existe');
-    expect(screen.getByRole('heading', { level: 1, name: 'Início' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: SAUDACAO })).toBeInTheDocument();
   });
 
   it('exibe a trilha de contexto da rota atual no cabeçalho', () => {

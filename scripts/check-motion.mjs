@@ -124,9 +124,7 @@ try {
   await paginaReduzida.goto(`${baseUrl}/sobre`, { waitUntil: 'networkidle' });
   await paginaReduzida.waitForTimeout(300);
 
-  const conteudoVisivel = await paginaReduzida
-    .getByText('O que o eloBoost nunca faz')
-    .isVisible();
+  const conteudoVisivel = await paginaReduzida.getByText('O que o eloBoost nunca faz').isVisible();
   verificar('com movimento reduzido, todo o conteúdo permanece visível', conteudoVisivel);
 
   const duracoes = await paginaReduzida.$$eval('[class*="rounded-card"]', (nodes) =>
@@ -149,5 +147,7 @@ try {
   await browser.close();
 }
 
-console.log(`\n${falhas === 0 ? 'Todas as verificações passaram.' : `${falhas} verificação(ões) falharam.`}`);
+console.log(
+  `\n${falhas === 0 ? 'Todas as verificações passaram.' : `${falhas} verificação(ões) falharam.`}`,
+);
 process.exit(falhas === 0 ? 0 : 1);

@@ -4,12 +4,17 @@
 //! local, e registrar os comandos nomeados. Toda a lógica testável mora em
 //! `elo-core`.
 //!
-//! **Escopo atual (Épico 0):** infraestrutura. Nenhuma limpeza, otimização,
-//! acesso ao registro, execução de processo ou chamada ao `PowerShell` existe no
-//! projeto — nem sequer as dependências para isso foram adicionadas.
+//! **Escopo atual (Épico 1):** infraestrutura e **leitura** de informações do
+//! sistema. Nenhuma limpeza, otimização, escrita no registro, encerramento de
+//! processo ou chamada ao `PowerShell` existe no projeto. O acesso ao Win32 é
+//! somente leitura e está confinado a [`system::ffi`].
 
 pub mod commands;
+pub mod models;
+pub mod services;
 pub mod state;
+pub mod system;
+pub mod util;
 
 use std::path::PathBuf;
 
@@ -55,6 +60,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::app::app_get_info,
             commands::app::app_get_database_status,
+            commands::system::app_get_runtime_info,
+            commands::system::system_get_snapshot,
         ])
         .run(tauri::generate_context!())
         .expect("erro ao iniciar a janela do eloBoost");

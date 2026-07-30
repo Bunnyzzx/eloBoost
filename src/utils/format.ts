@@ -85,6 +85,25 @@ export function formatDuration(totalSeconds: number): string {
   return `${Math.floor(totalSeconds)} s`;
 }
 
+/**
+ * Formata frequência de processador a partir de MHz.
+ *
+ * Acima de 1000 MHz usa GHz, que é como o valor aparece na caixa do produto.
+ */
+export function formatFrequency(megahertz: number): string {
+  if (!Number.isFinite(megahertz) || megahertz <= 0) return '—';
+
+  if (megahertz >= 1000) {
+    const gigahertz = megahertz / 1000;
+    return `${gigahertz.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} GHz`;
+  }
+
+  return `${Math.round(megahertz).toLocaleString('pt-BR')} MHz`;
+}
+
 /** Tempo relativo curto em pt-BR: "há 3 dias", "agora". */
 export function formatRelative(iso: string, now: Date = new Date()): string {
   const date = new Date(iso);
