@@ -1,0 +1,54 @@
+[package]
+name = "eloboost"
+description = "eloBoost — limpeza, manutenção e otimização segura para Windows"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[lib]
+# O Tauri exige um crate de biblioteca com nome estável; o binário é uma casca fina.
+name = "eloboost_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[lints.rust]
+# `unsafe` é negado no crate e liberado exclusivamente em `system::ffi`, com
+# `#[allow(unsafe_code)]` no módulo e um comentário `// SAFETY:` por bloco. A
+# revisão de segurança precisa olhar um único arquivo.
+unsafe_code = "deny"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+elo-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sysinfo = { workspace = true }
+tauri = { version = "2", features = [] }
+tokio = { version = "1", features = ["rt", "macros"] }
+tracing = { workspace = true }
+
+[target.'cfg(windows)'.dependencies]
+# Apenas os módulos Win32 efetivamente usados: versão do SO, token do processo
+# (para saber se somos administrador) e enumeração de adaptadores gráficos.
+windows = { version = "0.62", features = [
+  "Win32_Foundation",
+  "Win32_Graphics_Dxgi",
+  "Win32_Graphics_Dxgi_Common",
+  "Win32_Security",
+  "Win32_System_Registry",
+  "Win32_System_SystemInformation",
+  "Win32_System_Threading",
+] }
+
+[features]
+# Usado pelo `tauri dev` para habilitar ferramentas de desenvolvimento.
+default = []
