@@ -73,6 +73,17 @@ jobs:
       - name: Testes
         run: cargo test --workspace
 
+      # Verifica o código atrás de `#[cfg(windows)]` sem precisar de um runner
+      # Windows. `cargo check`/`clippy` não linkam, então o alvo GNU basta — e
+      # `cfg(windows)` é verdadeiro para ele, expondo os mesmos erros de FFI.
+      - name: Alvo Windows (verificação cruzada)
+        run: |
+          rustup target add x86_64-pc-windows-gnu
+          sudo apt-get install -y gcc-mingw-w64-x86-64
+          CC_x86_64_pc_windows_gnu=x86_64-w64-mingw32-gcc \
+            cargo clippy --target x86_64-pc-windows-gnu --workspace --all-targets \
+            --all-features -- -D warnings
+
   build-windows:
     name: Build Windows
     runs-on: windows-latest

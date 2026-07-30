@@ -134,6 +134,17 @@ cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo fmt --all --check
 ```
 
+Verificação do código exclusivo do Windows sem uma máquina Windows — `cargo check` e `clippy` não
+linkam, então o alvo GNU basta para type-checar tudo atrás de `#[cfg(windows)]`:
+
+```bash
+rustup target add x86_64-pc-windows-gnu
+sudo apt-get install -y gcc-mingw-w64-x86-64   # apenas no Linux
+
+CC_x86_64_pc_windows_gnu=x86_64-w64-mingw32-gcc \
+  cargo clippy --target x86_64-pc-windows-gnu --workspace --all-targets --all-features -- -D warnings
+```
+
 Validação da camada de animações num navegador real — navegação rápida, ausência de deslocamento
 de layout, barra lateral recolhida funcional e `prefers-reduced-motion` efetivo:
 

@@ -62,8 +62,7 @@ mod imp {
     use windows::core::{w, PCWSTR};
     use windows::Win32::Foundation::{CloseHandle, HANDLE};
     use windows::Win32::Graphics::Dxgi::{
-        CreateDXGIFactory1, IDXGIAdapter1, IDXGIFactory1, DXGI_ADAPTER_FLAG,
-        DXGI_ADAPTER_FLAG_SOFTWARE,
+        CreateDXGIFactory1, IDXGIAdapter1, IDXGIFactory1, DXGI_ADAPTER_FLAG_SOFTWARE,
     };
     use windows::Win32::Security::{
         GetTokenInformation, TokenElevation, TOKEN_ELEVATION, TOKEN_QUERY,
@@ -206,16 +205,21 @@ mod imp {
     }
 
     fn describe_adapter(adapter: &IDXGIAdapter1) -> Option<GraphicsAdapter> {
-        // SAFETY: `GetDesc1` preenche a struct passada por referência mutável;
-        // ela é inicializada com o padrão antes da chamada.
-        let mut desc = Default::default();
-        unsafe { adapter.GetDesc1(&mut desc) }.ok()?;
+        // SAFETY: nesta versão do crate `windows`, `GetDesc1` devolve a descrição
+        // por valor num `Result` — não há ponteiro de saída a manter válido. Um
+        // adaptador que falhe é simplesmente ignorado.
+        let desc = unsafe { adapter.GetDesc1() }.ok()?;
 
         let name = sanitize(&String::from_utf16_lossy(&desc.Description))?;
-        let is_software = DXGI_ADAPTER_FLAG(desc.Flags).0 & DXGI_ADAPTER_FLAG_SOFTWARE.0 != 0;
+
+        // `Flags` é `u32` na struct, mas a constante do flag é `i32`: comparamos
+        // na mesma largura, sem conversão com sinal.
+        let software_flag = u32::try_from(DXGI_ADAPTER_FLAG_SOFTWARE.0).unwrap_or(0);
+        let is_software = desc.Flags & software_flag != 0;
 
         Some(GraphicsAdapter {
             name,
+            // `usize` no Windows de 64 bits já é 64 bits; a conversão é exata.
             dedicated_video_memory: desc.DedicatedVideoMemory as u64,
             shared_system_memory: desc.SharedSystemMemory as u64,
             is_software,
