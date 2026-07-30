@@ -23,6 +23,7 @@ const FULL = { width: 1440, height: 900 };
 /** Uma entrada por tela navegável, mais as variantes de tema e resolução. */
 const SHOTS = [
   { name: '01-inicio', path: '/', ...FULL },
+  { name: '01b-analise', path: '/analise', ...FULL },
   { name: '02-limpeza', path: '/limpeza', ...FULL },
   { name: '03-otimizacoes', path: '/otimizacoes', ...FULL },
   { name: '04-inicializacao', path: '/inicializacao', ...FULL },

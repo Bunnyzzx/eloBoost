@@ -5,4 +5,7 @@
 //! apenas a forma dos dados.
 
 pub mod availability;
+pub mod scan_category;
+pub mod scan_result;
+pub mod scan_summary;
 pub mod system;

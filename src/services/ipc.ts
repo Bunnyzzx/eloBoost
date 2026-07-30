@@ -6,12 +6,14 @@
  *  2. Validar a resposta contra o schema Zod correspondente.
  *  3. Normalizar qualquer falha para `EloError`, com código, mensagem
  *     amigável, sugestão e ID de diagnóstico.
+ *  4. Assinar eventos do backend, com a mesma validação de contrato.
  *
  * O ESLint impede `import { invoke }` em qualquer outro arquivo
  * (regra `no-restricted-imports` em eslint.config.js).
  */
 
 import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
 import type { z } from 'zod';
 
 import { operationErrorSchema } from '@/schemas';
@@ -143,4 +145,52 @@ export async function invokeCommand<TSchema extends z.ZodTypeAny>(
   }
 
   return parsed.data;
+}
+
+/** Cancela uma assinatura de evento. */
+export type Unsubscribe = () => void;
+
+/**
+ * Assina um evento emitido pelo backend, validando cada carga.
+ *
+ * Eventos não passam por `invokeCommand`, então precisam da mesma barreira: uma
+ * carga fora do contrato é registrada e **descartada**, em vez de propagar
+ * `undefined` até a tela. Perder um evento de progresso é aceitável; renderizar
+ * um número inválido, não.
+ *
+ * Devolve uma função de cancelamento síncrona. A assinatura em si é assíncrona
+ * no Tauri, então cancelar antes de ela concluir precisa funcionar — daí o
+ * `cancelled` verificado nos dois pontos.
+ */
+export function subscribeToEvent<TSchema extends z.ZodTypeAny>(
+  event: string,
+  schema: TSchema,
+  onPayload: (payload: z.infer<TSchema>) => void,
+): Unsubscribe {
+  if (!isTauriAvailable()) return () => undefined;
+
+  let cancelled = false;
+  let stop: (() => void) | null = null;
+
+  void listen(event, ({ payload }) => {
+    if (cancelled) return;
+
+    const parsed = schema.safeParse(payload);
+    if (!parsed.success) {
+      console.error(`evento "${event}" fora do contrato`, parsed.error.issues);
+      return;
+    }
+    onPayload(parsed.data);
+  }).then((unlisten) => {
+    if (cancelled) {
+      unlisten();
+      return;
+    }
+    stop = unlisten;
+  });
+
+  return () => {
+    cancelled = true;
+    stop?.();
+  };
 }

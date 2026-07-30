@@ -4,13 +4,17 @@
 //! local, e registrar os comandos nomeados. Toda a lógica testável mora em
 //! `elo-core`.
 //!
-//! **Escopo atual (Épico 1):** infraestrutura e **leitura** de informações do
-//! sistema. Nenhuma limpeza, otimização, escrita no registro, encerramento de
-//! processo ou chamada ao `PowerShell` existe no projeto. O acesso ao Win32 é
-//! somente leitura e está confinado a [`system::ffi`].
+//! **Escopo atual (Épico 2):** infraestrutura, **leitura** de informações do
+//! sistema e **análise** das áreas limpáveis. Nenhuma limpeza, remoção,
+//! otimização, escrita no registro, encerramento de processo ou chamada ao
+//! `PowerShell` existe no projeto. O acesso ao Win32 é somente leitura e está
+//! confinado a [`system::ffi`]; o scanner ([`scanner`]) apenas percorre
+//! diretórios e soma tamanhos, e há um teste que falha se qualquer API de
+//! escrita aparecer no seu código.
 
 pub mod commands;
 pub mod models;
+pub mod scanner;
 pub mod services;
 pub mod state;
 pub mod system;
@@ -62,6 +66,8 @@ pub fn run() {
             commands::app::app_get_database_status,
             commands::system::app_get_runtime_info,
             commands::system::system_get_snapshot,
+            commands::scanner::scanner_list_categories,
+            commands::scanner::scanner_scan_all,
         ])
         .run(tauri::generate_context!())
         .expect("erro ao iniciar a janela do eloBoost");

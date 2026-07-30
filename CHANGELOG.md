@@ -7,6 +7,57 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Não lançado]
 
+### Adicionado — Épico 2: infraestrutura de análise (somente leitura)
+
+Nenhum arquivo é aberto, alterado, movido ou removido. Esta etapa mede — a limpeza é o Épico 3.
+
+**Motor de varredura (`src-tauri/src/scanner/`)**
+
+- Caminhada iterativa com pilha explícita de diretórios: o tamanho é somado durante o percurso e a
+  lista de arquivos nunca entra na memória. Uma pasta com 200 mil arquivos custa o mesmo que uma
+  com dez.
+- **Links nunca são seguidos.** Cada entrada é lida com metadados que não atravessam o link e, no
+  Windows, também pelo atributo de *reparse point* — que cobre *junctions*, invisíveis para
+  `is_symlink`. Uma junction para `C:\Users` dentro de `%TEMP%` não faz a análise medir a pasta
+  pessoal inteira.
+- Nenhum erro interrompe a análise: acesso negado, caminho longo demais, arquivo em uso e falhas de
+  leitura viram contadores de diagnóstico, e a categoria conclui com o que conseguiu medir.
+- Profundidade limitada a 64 níveis e filtros por prefixo ou extensão, para que uma categoria meça
+  exatamente os arquivos que a definem — e não a pasta inteira em que eles vivem.
+- Um teste lê o código-fonte do próprio módulo e falha se qualquer API de escrita aparecer; outro
+  compara um manifesto completo (nome, tamanho, data) antes e depois de uma análise.
+
+**Sete fontes independentes (`scanner/sources/`)**
+
+- Arquivos temporários, temporários do Windows, Lixeira, miniaturas e ícones, registros do sistema,
+  cache dos navegadores (Chrome, Edge, Firefox, todos os perfis) e Downloads.
+- Cada fonte resolve apenas as próprias raízes; acrescentar uma categoria é acrescentar um arquivo.
+- A Lixeira usa `SHQueryRecycleBin`, a API oficial — `$Recycle.Bin` nunca é enumerado à mão.
+- **Downloads é somente medido.** A política viaja no tipo (`ManualSelectionOnly`), o resumo a
+  exclui do "espaço recuperável" e há um teste que quebra se outra pasta pessoal for marcada como
+  limpável em lote.
+- Áreas exclusivas do Windows se declaram indisponíveis em outras plataformas, em vez de medir um
+  equivalente e chamá-lo pelo nome errado.
+
+**Comandos e eventos**
+
+- `scanner_list_categories` e `scanner_scan_all`. Nenhum recebe caminho da interface.
+- Cada categoria concluída é publicada em `scanner://category`, para que a tela preencha os cards
+  conforme chegam. O retorno do comando continua sendo a fonte de verdade e corrige qualquer evento
+  perdido.
+- `subscribeToEvent` em `services/ipc.ts`: eventos passam pela mesma validação Zod das respostas de
+  comando — uma carga fora do contrato é descartada, nunca renderizada.
+
+**Tela Análise**
+
+- Estados vazio, em andamento, concluído e erro. Os cards aparecem conforme cada área termina.
+- O progresso conta **categorias concluídas**, não bytes: não há como saber o total antes de
+  percorrer, e uma barra por estimativa andaria para trás. Enquanto nada respondeu, ela fica
+  indeterminada.
+- Uma área que não existe neste computador aparece em tom neutro — não é um problema a resolver.
+- Ao final, o aviso exigido pelo produto fica visível junto do número grande: **nenhum arquivo foi
+  removido**.
+
 ### Alterado — refinamento do Épico 1
 
 - **Barra lateral fixa**: o recolhimento foi removido por inteiro (botão, estado persistido,

@@ -9,4 +9,5 @@
 //! frontend.
 
 pub mod app;
+pub mod scanner;
 pub mod system;

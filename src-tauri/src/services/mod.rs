@@ -10,5 +10,6 @@ pub mod gpu_service;
 pub mod memory_service;
 pub mod os_service;
 pub mod privilege_service;
+pub mod scanner_service;
 pub mod storage_service;
 pub mod system_service;

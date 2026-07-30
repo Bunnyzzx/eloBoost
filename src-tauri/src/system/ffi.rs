@@ -42,6 +42,20 @@ pub struct GraphicsAdapter {
     pub is_software: bool,
 }
 
+/// Conteúdo da Lixeira, consultado pela API oficial do Windows.
+///
+/// O eloBoost **nunca** enumera `$Recycle.Bin` na mão: o layout dessa pasta é
+/// interno ao Windows, muda entre versões e contém metadados por usuário. A
+/// consulta oficial devolve os dois números de que precisamos e é somente
+/// leitura (docs/05 §2).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RecycleBinUsage {
+    /// Espaço ocupado pelos itens, em bytes.
+    pub size_bytes: u64,
+    /// Quantidade de itens.
+    pub item_count: u64,
+}
+
 /// Privilégio do processo atual.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ProcessPrivileges {
@@ -56,7 +70,7 @@ pub struct ProcessPrivileges {
 // ─────────────────────────────────────────────────────────────────────────────
 #[cfg(windows)]
 mod imp {
-    use super::{GraphicsAdapter, ProcessPrivileges, WindowsVersion};
+    use super::{GraphicsAdapter, ProcessPrivileges, RecycleBinUsage, WindowsVersion};
     use crate::util::text::sanitize;
 
     use windows::core::{w, PCWSTR};
@@ -72,6 +86,7 @@ mod imp {
         REG_VALUE_TYPE,
     };
     use windows::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
+    use windows::Win32::UI::Shell::{SHQueryRecycleBinW, SHQUERYRBINFO};
 
     /// Caminho da chave que descreve a versão instalada do Windows.
     const CURRENT_VERSION_KEY: PCWSTR = w!(r"SOFTWARE\Microsoft\Windows NT\CurrentVersion");
@@ -269,6 +284,29 @@ mod imp {
             is_admin_member: is_elevated,
         })
     }
+
+    pub fn recycle_bin_usage() -> Option<RecycleBinUsage> {
+        let mut info = SHQUERYRBINFO {
+            cbSize: u32::try_from(std::mem::size_of::<SHQUERYRBINFO>()).ok()?,
+            ..Default::default()
+        };
+
+        // SAFETY: `info` é uma struct viva cujo `cbSize` descreve exatamente o
+        // seu tamanho — a API não escreve além dele. O primeiro argumento nulo
+        // pede o total de **todas** as unidades, que é o que a tela mostra.
+        // `SHQueryRecycleBin` apenas consulta: não esvazia nem move nada.
+        let status = unsafe { SHQueryRecycleBinW(PCWSTR::null(), &raw mut info) };
+        if status.is_err() {
+            return None;
+        }
+
+        Some(RecycleBinUsage {
+            // Os campos são `i64` na API; um valor negativo indicaria erro, e
+            // `try_from` o transforma em `None` em vez de num número absurdo.
+            size_bytes: u64::try_from(info.i64Size).ok()?,
+            item_count: u64::try_from(info.i64NumItems).ok()?,
+        })
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -280,7 +318,7 @@ mod imp {
 // ─────────────────────────────────────────────────────────────────────────────
 #[cfg(not(windows))]
 mod imp {
-    use super::{GraphicsAdapter, ProcessPrivileges, WindowsVersion};
+    use super::{GraphicsAdapter, ProcessPrivileges, RecycleBinUsage, WindowsVersion};
 
     pub fn windows_version() -> Option<WindowsVersion> {
         None
@@ -291,6 +329,10 @@ mod imp {
     }
 
     pub fn process_privileges() -> Option<ProcessPrivileges> {
+        None
+    }
+
+    pub fn recycle_bin_usage() -> Option<RecycleBinUsage> {
         None
     }
 }
@@ -319,6 +361,15 @@ pub fn process_privileges() -> Option<ProcessPrivileges> {
     imp::process_privileges()
 }
 
+/// Tamanho e quantidade de itens na Lixeira, somando todas as unidades.
+///
+/// Consulta pela API oficial (`SHQueryRecycleBin`), somente leitura. `None` fora
+/// do Windows ou se a consulta falhar.
+#[must_use]
+pub fn recycle_bin_usage() -> Option<RecycleBinUsage> {
+    imp::recycle_bin_usage()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -330,6 +381,7 @@ mod tests {
         let _ = windows_version();
         let _ = graphics_adapters();
         let _ = process_privileges();
+        let _ = recycle_bin_usage();
     }
 
     #[cfg(not(windows))]
@@ -338,6 +390,16 @@ mod tests {
         assert!(windows_version().is_none());
         assert!(graphics_adapters().is_none());
         assert!(process_privileges().is_none());
+        assert!(recycle_bin_usage().is_none());
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn no_windows_a_lixeira_responde_com_numeros_coerentes() {
+        // A Lixeira pode estar vazia — o que importa é a consulta responder e
+        // não devolver um tamanho sem itens (ou o contrário).
+        let usage = recycle_bin_usage().expect("SHQueryRecycleBin deve responder");
+        assert_eq!(usage.item_count == 0, usage.size_bytes == 0);
     }
 
     #[cfg(windows)]

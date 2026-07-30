@@ -2,11 +2,11 @@
 
 > Utilitário de limpeza, manutenção e otimização **segura** para Windows 10 e 11.
 >
-> **Status: Épico 1 — dashboard com dados reais.** A tela Início lê informações verdadeiras do
-> computador (sistema, CPU, memória, GPU, volumes, tempo ligado, privilégio) diretamente do backend
-> Rust. **Nenhuma funcionalidade de limpeza, otimização ou escrita no registro foi implementada** —
-> o acesso ao sistema é somente leitura, e as telas ainda não implementadas declaram isso
-> explicitamente, sem dados simulados.
+> **Status: Épico 2 — análise do computador.** A tela Início lê informações verdadeiras do
+> computador e a tela Análise percorre as áreas onde o Windows acumula arquivos descartáveis,
+> informando quantos arquivos e quanto espaço cada uma ocupa. **Tudo é somente leitura:** nenhum
+> arquivo é aberto, alterado, movido ou removido, e nenhuma escrita no registro existe no projeto.
+> As telas ainda não implementadas declaram isso explicitamente, sem dados simulados.
 
 ---
 
@@ -41,6 +41,11 @@ O dashboard, com dados reais lidos do sistema:
 
 ![Dashboard com dados reais](screenshots/18-inicio-aplicativo-real.png)
 
+A análise do computador, medindo áreas reais. As categorias exclusivas do Windows aparecem como
+indisponíveis nesta máquina Linux, em vez de zeradas:
+
+![Análise com dados reais](screenshots/20-analise-aplicativo-real.png)
+
 A ficha técnica completa. Os campos que este sistema não expõe aparecem como `não disponível`, com
 o motivo ao passar o mouse — nunca zerados:
 
@@ -50,7 +55,7 @@ o motivo ao passar o mouse — nunca zerados:
 | --- | --- |
 | ![Sobre](screenshots/12-sobre.png) | ![Tema claro](screenshots/13-tema-claro.png) |
 
-As 19 capturas de `screenshots/` cobrem as 12 telas, os dois temas, as resoluções 1280×720,
+As 21 capturas de `screenshots/` cobrem as 13 telas, os dois temas, as resoluções 1280×720,
 1366×768, 1920×1080 e o aplicativo real em execução.
 
 Para regenerá-las:
@@ -134,11 +139,11 @@ pnpm verify:rust      # cargo fmt --check + clippy -D warnings + cargo test
 # Individualmente
 pnpm typecheck
 pnpm lint
-pnpm test             # 141 testes do frontend
+pnpm test             # 172 testes do frontend
 pnpm test:watch
 pnpm test:coverage
 
-cargo test --workspace --all-features   # 103 testes do backend
+cargo test --workspace --all-features   # 168 testes do backend
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo fmt --all --check
 ```
@@ -163,8 +168,11 @@ pnpm preview --port 4173 &
 pnpm check:motion
 ```
 
-**Nenhum teste toca pastas reais do Windows nem o registro.** Os testes do banco usam SQLite em
-memória ou diretórios temporários isolados.
+**Nenhum teste escreve fora de uma pasta temporária própria, e nenhum toca o registro.** Os testes
+do banco usam SQLite em memória ou diretórios isolados; os testes do scanner montam a própria
+árvore de arquivos e a removem no fim. Os que exercitam áreas reais da máquina — a pasta
+temporária, por exemplo — apenas as **leem**, e um deles compara um manifesto completo antes e
+depois para provar que a análise não alterou nada.
 
 ## 5. Gerar o build
 
@@ -185,7 +193,7 @@ pnpm tauri build            # instalador Windows (NSIS + MSI) em
 src/                 Interface React
   app/               App, rotas, tema, captura global de erros
   components/        Design system (ui, feedback, layout)
-  pages/             12 telas
+  pages/             13 telas
   services/          Única camada autorizada a chamar comandos Tauri
   schemas/           Validadores Zod das respostas do backend
   stores/            Zustand por domínio
@@ -201,6 +209,8 @@ crates/elo-core/     Núcleo sem dependência do Tauri
 
 src-tauri/           Aplicativo Tauri
   src/commands/      Comandos nomeados (a fronteira com a interface)
+  src/scanner/       Motor de varredura somente leitura + uma fonte por área
+  src/models/        Contratos de dados (Availability, resultados de análise)
   src/state.rs       Estado compartilhado (banco, pasta de dados)
   capabilities/      Permissões mínimas da janela
   icons/             Ícones do instalador

@@ -23,6 +23,29 @@ Princípios:
 | `system_get_health` | `{ refresh: bool }` | `HealthReport` | não |
 | `system_analyze` | `{ deep: bool }` | `AnalysisResult` | não |
 
+### Análise (implementado no Épico 2 — somente leitura)
+| Comando | Entrada | Saída | Admin |
+|---|---|---|---|
+| `scanner_list_categories` | — | `CategoryScan[]` | não |
+| `scanner_scan_all` | — | `ScanSummary` | não* |
+
+Nenhum dos dois recebe caminho: a interface pede "analise o computador", e o backend decide quais
+áreas conhece. Durante `scanner_scan_all`, cada categoria concluída é publicada como evento, para
+que a tela preencha os cards conforme chegam:
+
+| Evento | Carga | Quando |
+|---|---|---|
+| `scanner://category` | `CategoryScan` | uma vez por área concluída, na ordem de conclusão |
+| `scanner://finished` | `ScanSummary` | ao final da análise |
+
+Os eventos são **progresso, não resultado**: o valor de retorno de `scanner_scan_all` é a fonte de
+verdade e preenche qualquer categoria cujo evento tenha se perdido. A carga de cada evento passa
+pelo mesmo schema Zod das respostas de comando — uma carga fora do contrato é descartada, nunca
+renderizada.
+
+\* áreas de sistema (`windows_temp`, `logs`) podem exigir elevação para leitura completa; a análise
+conclui assim mesmo, com status `completed_with_warnings` e o diagnóstico do que ficou de fora.
+
 ### Limpeza
 | Comando | Entrada | Saída | Admin |
 |---|---|---|---|

@@ -8,7 +8,7 @@ Status: **Entrega 1 — planejamento**.
 
 | # | Risco | Prob. | Impacto | Mitigação | Sinal de alerta |
 |---|---|---|---|---|---|
-| R-01 | Bug de caminho apaga dados do usuário | Baixa | **Catastrófico** | `PathGuard` por handle, allowlist, Épico 2 antes do Épico 3, suíte adversarial, Lixeira por padrão em risco médio | Qualquer PR que remova arquivo sem `ValidatedPath` |
+| R-01 | Bug de caminho apaga dados do usuário | Baixa | **Catastrófico** | `PathGuard` por handle, allowlist, Épico 2b antes do Épico 3, suíte adversarial, Lixeira por padrão em risco médio | Qualquer PR que remova arquivo sem `ValidatedPath` |
 | R-02 | Antivírus classifica o eloBoost como PUP/riskware | **Alta** | Alto | Assinatura Authenticode desde o primeiro release, sem PowerShell/`cmd`, sem packers/ofuscação, submissão a Microsoft/AV para whitelisting, comportamento sempre precedido de consentimento | Detecção em VirusTotal no primeiro build |
 | R-03 | Plumbing COM/WMI em Rust consome mais tempo que o estimado | Média | Médio | Encapsular cedo em `system/wmi.rs`, usar a crate `wmi` onde couber, timebox de 2d por integração antes de reavaliar | Épico 1 estourando prazo |
 | R-04 | Playwright instável sobre WebView2 | Média | Baixo | E2E é `P3`; a cobertura real vem de Vitest+RTL com backend mockado na camada `services/` | — |

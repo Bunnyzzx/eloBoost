@@ -18,6 +18,7 @@ import {
   ListTree,
   Power,
   RotateCcw,
+  ScanSearch,
   Settings,
   Sparkles,
   Zap,
@@ -25,6 +26,7 @@ import {
 
 export const ROUTES = {
   dashboard: '/',
+  scanner: '/analise',
   cleanup: '/limpeza',
   optimizations: '/otimizacoes',
   startup: '/inicializacao',
@@ -61,6 +63,14 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     group: 'tools',
     description: 'Visão geral do computador e saúde do sistema',
     plannedIn: 'Épico 1 e 5',
+  },
+  {
+    path: ROUTES.scanner,
+    label: 'Análise',
+    icon: ScanSearch,
+    group: 'tools',
+    description: 'Quanto espaço cada área do sistema está ocupando',
+    plannedIn: 'Épico 2',
   },
   {
     path: ROUTES.cleanup,

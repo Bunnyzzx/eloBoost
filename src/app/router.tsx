@@ -5,6 +5,7 @@ import { AboutPage } from '@/pages/about/AboutPage';
 import { InstalledAppsPage } from '@/pages/apps/InstalledAppsPage';
 import { CleanupPage } from '@/pages/cleanup/CleanupPage';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
+import { ScannerPage } from '@/pages/scanner/ScannerPage';
 import { HistoryPage } from '@/pages/history/HistoryPage';
 import { MonitoringPage } from '@/pages/monitoring/MonitoringPage';
 import { OptimizationsPage } from '@/pages/optimizations/OptimizationsPage';
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { index: true, element: <DashboardPage /> },
+      { path: ROUTES.scanner.slice(1), element: <ScannerPage /> },
       { path: ROUTES.cleanup.slice(1), element: <CleanupPage /> },
       { path: ROUTES.optimizations.slice(1), element: <OptimizationsPage /> },
       { path: ROUTES.startup.slice(1), element: <StartupPage /> },

@@ -56,7 +56,19 @@ inicializado. Dados ainda inexistentes (nada de mock disfarçado de real).
 | S-06 | Uptime + amostragem básica CPU/RAM/disco (PDH) | 1d |
 | S-07 | `SystemInfoCard`, `StatCard`, `Sparkline` no dashboard, com dados reais | 0.5d |
 
-### Épico 2 — Segurança de caminhos `P0` (~4d) — **antes de qualquer limpeza**
+### Épico 2a — Infraestrutura de análise `P0` (~3d) — **entregue**
+| ID | Tarefa | Est. |
+|---|---|---|
+| N-01 | Motor de varredura somente leitura: iterativo, sem seguir links, erros viram diagnóstico | 1d |
+| N-02 | Sete fontes independentes (temporários, temporários do Windows, lixeira, miniaturas, registros, cache de navegadores, downloads) | 1d |
+| N-03 | `ScannerService` paralelo + eventos de progresso por categoria | 0.5d |
+| N-04 | Tela Análise: estados vazio, carregando, concluído e erro, com aviso de transparência | 0.5d |
+
+> Esta etapa **não remove nada**. Ela produz os números que a limpeza (Épico 3) vai usar, e por
+> isso vem antes — mas continua valendo que **nenhuma remoção acontece antes do `PathGuard`**
+> (Épico 2b, abaixo). O scanner não devolve caminhos à interface: devolve contagens e tamanhos.
+
+### Épico 2b — Segurança de caminhos `P0` (~4d) — **antes de qualquer limpeza**
 | ID | Tarefa | Est. |
 |---|---|---|
 | P-01 | `PathGuard`: canonicalização, allowlist, denylist, traversal, dispositivos, UNC | 1.5d |
@@ -198,7 +210,7 @@ Armazenamento (G) ──► Processos/Monitor (M) ──► Distribuição (D) �
                           Qualidade (Q) atravessa tudo
 ```
 
-Ordem inegociável: **Épico 2 (PathGuard) antes do Épico 3 (limpeza)** e **Épico 7 (elevação)
+Ordem inegociável: **Épico 2b (PathGuard) antes do Épico 3 (limpeza)** e **Épico 7 (elevação)
 antes do Épico 9 (otimizações)**. Nenhuma função que escreve no sistema é implementada antes da
 sua camada de proteção existir e estar testada.
 

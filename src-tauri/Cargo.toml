@@ -38,7 +38,8 @@ tracing = { workspace = true }
 
 [target.'cfg(windows)'.dependencies]
 # Apenas os módulos Win32 efetivamente usados: versão do SO, token do processo
-# (para saber se somos administrador) e enumeração de adaptadores gráficos.
+# (para saber se somos administrador), enumeração de adaptadores gráficos e a
+# consulta oficial de tamanho da Lixeira (`Win32_UI_Shell`, somente leitura).
 windows = { version = "0.62", features = [
   "Win32_Foundation",
   "Win32_Graphics_Dxgi",
@@ -47,6 +48,7 @@ windows = { version = "0.62", features = [
   "Win32_System_Registry",
   "Win32_System_SystemInformation",
   "Win32_System_Threading",
+  "Win32_UI_Shell",
 ] }
 
 [features]
