@@ -1,0 +1,10 @@
+# Fonte única da versão do Rust, para que a verificação local e a do CI sejam
+# idênticas. Sem isso, o CI acompanha o canal `stable` e um lint novo do Clippy
+# pode reprovar um build que passava na máquina do desenvolvedor.
+#
+# Ao atualizar, rode `cargo clippy --workspace --all-targets -- -D warnings`
+# antes de commitar: lints novos costumam aparecer junto com a versão.
+[toolchain]
+channel = "1.97.0"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

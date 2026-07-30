@@ -1,0 +1,38 @@
+[package]
+name = "eloboost"
+description = "eloBoost — limpeza, manutenção e otimização segura para Windows"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[lib]
+# O Tauri exige um crate de biblioteca com nome estável; o binário é uma casca fina.
+name = "eloboost_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[lints.rust]
+# Todo código `unsafe` ficará confinado em `system/ffi.rs`, a partir do Épico 1.
+# Enquanto esse módulo não existe, o crate inteiro proíbe `unsafe`.
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+elo-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tauri = { version = "2", features = [] }
+tracing = { workspace = true }
+
+[features]
+# Usado pelo `tauri dev` para habilitar ferramentas de desenvolvimento.
+default = []

@@ -1,0 +1,33 @@
+[workspace]
+members = ["crates/elo-core", "src-tauri"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.77"
+license = "MIT"
+authors = ["eloBoost"]
+repository = "https://github.com/Bunnyzzx/eloBoost"
+
+[workspace.dependencies]
+elo-core = { path = "crates/elo-core" }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+uuid = { version = "1", features = ["v4", "v7", "serde"] }
+time = { version = "0.3", features = ["formatting", "parsing", "macros"] }
+sha2 = "0.10"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-appender = "0.2"
+rusqlite = { version = "0.37", features = ["bundled"] }
+
+[profile.release]
+# Binário pequeno importa: um utilitário de otimização não pode ser pesado.
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
