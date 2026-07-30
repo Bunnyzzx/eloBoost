@@ -24,7 +24,7 @@ export function SystemDetailsCard({ snapshot, loading }: SystemDetailsCardProps)
   const swapUsed = snapshot != null ? availableValue(snapshot.memory.swapUsedBytes) : null;
 
   return (
-    <Card className="h-full">
+    <Card>
       <CardHeader
         icon={<Layers className="size-4" />}
         title="Seu computador"
@@ -42,9 +42,11 @@ export function SystemDetailsCard({ snapshot, loading }: SystemDetailsCardProps)
             <InfoRow label="Nome do computador" value={snapshot.os.computerName} selectable />
             <InfoRow label="Usuário" value={snapshot.os.userName} />
             <InfoRow label="Sistema" value={snapshot.os.name} />
-            <InfoRow label="Edição" value={snapshot.os.edition} />
+            {/* "Versão" sozinho colidia com a versão do eloBoost, exibida no card
+                ao lado. O rótulo diz de qual versão se trata. */}
+            <InfoRow label="Edição do Windows" value={snapshot.os.edition} />
             <InfoRow
-              label="Versão"
+              label="Versão do Windows"
               value={snapshot.os.displayVersion}
               hint="Versão comercial do Windows, como 23H2."
             />

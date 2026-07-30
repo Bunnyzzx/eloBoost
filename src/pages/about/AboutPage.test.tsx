@@ -1,5 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AboutPage } from '@/pages/about/AboutPage';
@@ -7,147 +6,103 @@ import { AboutPage } from '@/pages/about/AboutPage';
 const invokeMock = vi.hoisted(() => vi.fn());
 vi.mock('@tauri-apps/api/core', () => ({ invoke: invokeMock }));
 
-function setTauriPresent(present: boolean) {
-  if (present) {
-    (window as unknown as Record<string, unknown>)['__TAURI_INTERNALS__'] = {};
-  } else {
-    delete (window as unknown as Record<string, unknown>)['__TAURI_INTERNALS__'];
-  }
-}
-
-const APP_INFO = {
+const RUNTIME_INFO = {
   name: 'eloBoost',
   version: '0.1.0',
-  buildProfile: 'debug',
+  buildProfile: 'release',
+  target: 'x86_64-windows-windows',
   runningInTauri: true,
-};
-
-const DATABASE_STATUS = {
-  schemaVersion: 1,
-  expectedVersion: 1,
-  appliedMigrations: [{ version: 1, name: 'init', appliedAt: '2026-07-29T12:00:00Z' }],
-  databasePathMasked: 'C:\\Users\\%USER%\\%APPDATA%\\eloBoost\\eloboost.db',
-  sizeBytes: 131072,
-  healthy: true,
 };
 
 beforeEach(() => {
   invokeMock.mockReset();
-  setTauriPresent(true);
+  invokeMock.mockResolvedValue(RUNTIME_INFO);
+  (window as unknown as Record<string, unknown>)['__TAURI_INTERNALS__'] = {};
 });
 
-describe('AboutPage — caminho completo até o backend', () => {
-  it('exibe versão e diagnóstico do banco vindos dos comandos Tauri', async () => {
-    invokeMock.mockImplementation((command: string) => {
-      if (command === 'app_get_info') return Promise.resolve(APP_INFO);
-      if (command === 'app_get_database_status') return Promise.resolve(DATABASE_STATUS);
-      return Promise.reject(new Error(`comando inesperado: ${command}`));
-    });
-
+describe('AboutPage — conteúdo para o usuário', () => {
+  it('explica o que o aplicativo é e para qual sistema', async () => {
     render(<AboutPage />);
 
-    expect(await screen.findByText('0.1.0')).toBeInTheDocument();
-    expect(await screen.findByText('1 de 1')).toBeInTheDocument();
-    expect(screen.getByText('128 KB')).toBeInTheDocument();
-    expect(screen.getByText('Íntegro')).toBeInTheDocument();
-    expect(screen.getByText(/init/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Sobre o eloBoost' })).toBeInTheDocument();
+    expect(screen.getByText('Windows 10 e Windows 11')).toBeInTheDocument();
+    expect(await screen.findByText('versão 0.1.0')).toBeInTheDocument();
   });
 
-  it('mostra o caminho do banco já mascarado, sem o nome real da conta', async () => {
-    invokeMock.mockImplementation((command: string) =>
-      command === 'app_get_info' ? Promise.resolve(APP_INFO) : Promise.resolve(DATABASE_STATUS),
-    );
-
+  it('apresenta os três princípios do produto', () => {
     render(<AboutPage />);
 
-    expect(await screen.findByText(/%USER%/)).toBeInTheDocument();
+    expect(screen.getByText('Segurança em primeiro lugar')).toBeInTheDocument();
+    expect(screen.getByText('Privacidade')).toBeInTheDocument();
+    expect(screen.getByText('Transparência')).toBeInTheDocument();
   });
 
-  it('apresenta erro do backend com sugestão e ID de diagnóstico, sem stack trace', async () => {
-    invokeMock.mockImplementation((command: string) => {
-      if (command === 'app_get_info') return Promise.resolve(APP_INFO);
-      return Promise.reject({
-        code: 'DATABASE_ERROR',
-        message: 'Não foi possível acessar os dados locais do eloBoost.',
-        technicalDetails: 'rusqlite::Error: database is locked',
-        suggestion: 'Reinicie o eloBoost. Se persistir, informe o ID de diagnóstico.',
-        retryable: true,
-        diagnosticId: 'elo-abc123',
-      });
-    });
+  it('afirma que nenhuma limpeza acontece sem confirmação', () => {
+    render(<AboutPage />);
+    expect(screen.getByText('Nenhuma limpeza acontece sem a sua confirmação.')).toBeInTheDocument();
+  });
 
+  it('afirma que o aplicativo funciona localmente e não envia dados', () => {
     render(<AboutPage />);
 
+    expect(screen.getByText(/ficam aqui e não são enviadas a lugar nenhum/)).toBeInTheDocument();
+    expect(screen.getByText(/Nada é compartilhado automaticamente/)).toBeInTheDocument();
+  });
+
+  it('afirma que cada limpeza mostra o que será removido', () => {
+    render(<AboutPage />);
     expect(
-      await screen.findByText('Não foi possível acessar os dados locais do eloBoost.'),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/elo-abc123/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Tentar novamente/ })).toBeInTheDocument();
-  });
-
-  it('permite tentar novamente após uma falha', async () => {
-    invokeMock.mockImplementation((command: string) => {
-      if (command === 'app_get_info') return Promise.resolve(APP_INFO);
-      return Promise.reject({
-        code: 'DATABASE_ERROR',
-        message: 'Não foi possível acessar os dados locais do eloBoost.',
-        technicalDetails: null,
-        suggestion: null,
-        retryable: true,
-        diagnosticId: 'elo-1',
-      });
-    });
-
-    render(<AboutPage />);
-    await screen.findByRole('button', { name: /Tentar novamente/ });
-
-    const chamadasAntes = invokeMock.mock.calls.filter(
-      (call) => call[0] === 'app_get_database_status',
-    ).length;
-
-    await userEvent.click(screen.getByRole('button', { name: /Tentar novamente/ }));
-
-    await waitFor(() => {
-      const chamadasDepois = invokeMock.mock.calls.filter(
-        (call) => call[0] === 'app_get_database_status',
-      ).length;
-      expect(chamadasDepois).toBeGreaterThan(chamadasAntes);
-    });
-  });
-
-  it('rejeita resposta fora do contrato em vez de exibir dado inválido', async () => {
-    invokeMock.mockImplementation((command: string) => {
-      if (command === 'app_get_info') return Promise.resolve(APP_INFO);
-      // `schemaVersion` como texto: divergência de contrato.
-      return Promise.resolve({ ...DATABASE_STATUS, schemaVersion: 'um' });
-    });
-
-    render(<AboutPage />);
-
-    expect(
-      await screen.findByText('A resposta recebida do aplicativo não pôde ser interpretada.'),
+      screen.getByText(/Cada limpeza mostra a lista do que será removido/),
     ).toBeInTheDocument();
   });
+});
 
-  it('fora do Tauri, informa que o banco local não existe em vez de falhar', async () => {
-    setTauriPresent(false);
+describe('AboutPage — o que deixou de aparecer', () => {
+  it('não expõe diagnóstico técnico do banco de dados', async () => {
     render(<AboutPage />);
+    await screen.findByText('versão 0.1.0');
 
-    expect(
-      await screen.findByText(/O banco local só existe no aplicativo instalado/),
-    ).toBeInTheDocument();
-    expect(invokeMock).not.toHaveBeenCalled();
+    // Estes dados são de desenvolvedor e vivem no dashboard e nos logs.
+    const texto = document.body.textContent ?? '';
+    expect(texto).not.toMatch(/banco de dados/i);
+    expect(texto).not.toMatch(/schema/i);
+    expect(texto).not.toMatch(/migration/i);
+    expect(texto).not.toMatch(/%APPDATA%/);
+    expect(texto).not.toMatch(/alvo do build/i);
   });
 
-  it('lista os compromissos do produto', () => {
-    setTauriPresent(false);
+  it('não contém promessas negativas sobre desempenho', async () => {
+    render(<AboutPage />);
+    await screen.findByText('versão 0.1.0');
+
+    // O produto terá otimizações reais; a página fala do que ele faz, não de
+    // uma lista do que ele deixa de prometer.
+    const texto = document.body.textContent ?? '';
+    expect(texto).not.toMatch(/FPS/i);
+    expect(texto).not.toMatch(/nunca faz/i);
+  });
+
+  it('só chama o backend para ler a versão', async () => {
+    render(<AboutPage />);
+    await screen.findByText('versão 0.1.0');
+
+    const comandos = new Set(invokeMock.mock.calls.map((call) => call[0] as string));
+    expect(comandos).toEqual(new Set(['app_get_runtime_info']));
+  });
+});
+
+describe('AboutPage — build de desenvolvimento', () => {
+  it('marca a versão como de desenvolvimento apenas em build debug', async () => {
+    invokeMock.mockResolvedValue({ ...RUNTIME_INFO, buildProfile: 'debug' });
     render(<AboutPage />);
 
-    expect(
-      screen.getByText('Desativar o Windows Defender, o firewall ou o Windows Update'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('Executar comandos arbitrários vindos da interface'),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/desenvolvimento/)).toBeInTheDocument();
+  });
+
+  it('não marca nada em build de release', async () => {
+    render(<AboutPage />);
+    await screen.findByText('versão 0.1.0');
+
+    expect(screen.queryByText(/desenvolvimento/)).not.toBeInTheDocument();
   });
 });

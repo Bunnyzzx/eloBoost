@@ -33,15 +33,14 @@ const SHOTS = [
   { name: '09-restauracao', path: '/restauracao', ...FULL },
   { name: '10-historico', path: '/historico', ...FULL },
   { name: '11-configuracoes', path: '/configuracoes', ...FULL },
-  { name: '12-sobre', path: '/sobre', width: 1440, height: 1080 },
+  { name: '12-sobre', path: '/sobre', ...FULL },
 
-  // Variantes: tema, resoluções mínimas e barra lateral recolhida.
+  // Variantes: tema e resoluções mínimas.
   { name: '13-tema-claro', path: '/', ...FULL, theme: 'light' },
-  { name: '14-sobre-tema-claro', path: '/sobre', width: 1440, height: 1080, theme: 'light' },
+  { name: '14-sobre-tema-claro', path: '/sobre', ...FULL, theme: 'light' },
   { name: '15-1280x720', path: '/', width: 1280, height: 720 },
   { name: '16-1366x768', path: '/limpeza', width: 1366, height: 768 },
   { name: '17-1920x1080', path: '/', width: 1920, height: 1080 },
-  { name: '18-sidebar-recolhida', path: '/', width: 1080, height: 800 },
 ];
 
 await mkdir(outputDir, { recursive: true });

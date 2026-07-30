@@ -1,226 +1,184 @@
-import { Ban, Database, Info, ShieldCheck } from 'lucide-react';
+import { Eye, Info, Lock, MonitorCheck, ShieldCheck } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-import { ErrorState } from '@/components/feedback/ErrorState';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { StaggerItem } from '@/components/motion/Stagger';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardBody, CardHeader } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useAsync } from '@/hooks/useAsync';
-import { getAppInfo, getDatabaseStatus } from '@/services/appService';
-import { isTauriAvailable } from '@/services/ipc';
-import { formatBytes, formatDateTime } from '@/utils/format';
+import { getAppRuntimeInfo } from '@/services/systemService';
 
-/** Compromissos do produto — exibidos ao usuário, não só na documentação. */
-const NEVER_DOES: readonly string[] = [
-  'Desativar o Windows Defender, o firewall ou o Windows Update',
-  'Prometer ganho de FPS ou qualquer número de desempenho não medido',
-  'Apagar arquivos pessoais sem seleção explícita, item a item',
-  'Executar comandos arbitrários vindos da interface',
-  'Rodar como administrador o tempo todo, ou contornar o UAC',
-  'Coletar nomes de arquivos, documentos, senhas ou histórico de navegação',
-  'Usar pop-ups agressivos ou padrões enganosos de compra',
+/**
+ * Um princípio do produto: título, explicação e os pontos concretos.
+ *
+ * A página inteira é feita destes blocos — o texto é o conteúdo, e o layout
+ * apenas o organiza.
+ */
+interface Principle {
+  icon: LucideIcon;
+  title: string;
+  summary: string;
+  points: readonly string[];
+}
+
+const PRINCIPLES: readonly Principle[] = [
+  {
+    icon: ShieldCheck,
+    title: 'Segurança em primeiro lugar',
+    summary:
+      'Manutenção de computador só é útil quando você confia no que está acontecendo. Por isso, nada é feito às escondidas.',
+    points: [
+      'Nenhuma limpeza acontece sem a sua confirmação.',
+      'Antes de remover qualquer coisa, o eloBoost mostra exatamente o que encontrou.',
+      'Alterações de configuração criam um backup automático, para que você possa voltar atrás.',
+      'Arquivos pessoais nunca são removidos sem a sua escolha, item a item.',
+    ],
+  },
+  {
+    icon: Lock,
+    title: 'Privacidade',
+    summary:
+      'O eloBoost funciona inteiramente no seu computador. Não existe conta, servidor nem sincronização.',
+    points: [
+      'As informações lidas do seu computador ficam aqui e não são enviadas a lugar nenhum.',
+      'Nenhum dado pessoal, documento ou histórico de navegação é coletado.',
+      'Nada é compartilhado automaticamente — nem estatísticas de uso.',
+      'Você pode apagar todos os dados locais do aplicativo quando quiser.',
+    ],
+  },
+  {
+    icon: Eye,
+    title: 'Transparência',
+    summary:
+      'Você deve entender cada ação antes que ela aconteça, e conferir depois o que foi feito.',
+    points: [
+      'Cada limpeza mostra a lista do que será removido, com tamanho e local.',
+      'Cada ajuste explica o que muda, o benefício esperado e os efeitos colaterais.',
+      'Todas as ações ficam registradas num histórico que você pode consultar.',
+      'Quando uma informação não puder ser lida do seu computador, o eloBoost diz isso — em vez de mostrar um número aproximado.',
+    ],
+  },
 ];
 
-function AppInfoCard() {
-  const appInfo = useAsync(getAppInfo);
+/**
+ * Versão do aplicativo, no cabeçalho — o único dado técnico que ficou.
+ *
+ * Se a leitura falhar, o selo simplesmente não aparece. Um bloco de erro no
+ * cabeçalho de uma página institucional seria desproporcional: a versão é
+ * metadado, e a página continua inteiramente útil sem ela.
+ */
+function VersionBadge() {
+  const runtime = useAsync(getAppRuntimeInfo);
 
-  return (
-    <Card>
-      <CardHeader
-        icon={<Info className="size-4" />}
-        title="Sobre o eloBoost"
-        description="Utilitário de limpeza, manutenção e otimização segura para Windows 10 e 11."
-      />
-      <CardBody>
-        {appInfo.status === 'loading' && <Skeleton className="h-16 w-full" />}
-
-        {appInfo.status === 'error' && appInfo.error != null && (
-          <ErrorState error={appInfo.error} onRetry={appInfo.reload} />
-        )}
-
-        {appInfo.status === 'success' && appInfo.data != null && (
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-            <div>
-              <dt className="text-fg-muted">Versão</dt>
-              <dd className="mt-0.5 font-medium text-fg selectable" data-numeric>
-                {appInfo.data.version}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-fg-muted">Compilação</dt>
-              <dd className="mt-0.5 font-medium text-fg">{appInfo.data.buildProfile}</dd>
-            </div>
-            <div className="col-span-2">
-              <dt className="text-fg-muted">Ambiente</dt>
-              <dd className="mt-1">
-                {isTauriAvailable() ? (
-                  <Badge tone="ok">Aplicativo desktop (Tauri)</Badge>
-                ) : (
-                  <Badge tone="attention">Navegador — funções de sistema indisponíveis</Badge>
-                )}
-              </dd>
-            </div>
-          </dl>
-        )}
-      </CardBody>
-    </Card>
-  );
-}
-
-function DatabaseCard() {
-  const database = useAsync(getDatabaseStatus);
-
-  if (!isTauriAvailable()) {
-    return (
-      <Card>
-        <CardHeader
-          icon={<Database className="size-4" />}
-          title="Banco de dados local"
-          description="Diagnóstico do armazenamento local do eloBoost."
-        />
-        <CardBody>
-          <p className="text-sm text-fg-secondary">
-            O banco local só existe no aplicativo instalado. No navegador, apenas a interface é
-            exibida.
-          </p>
-        </CardBody>
-      </Card>
-    );
+  if (runtime.status === 'loading') {
+    return <Skeleton className="h-6 w-24" label="Carregando a versão" />;
   }
 
+  if (runtime.data == null) return null;
+
   return (
-    <Card>
-      <CardHeader
-        icon={<Database className="size-4" />}
-        title="Banco de dados local"
-        description="Todos os dados do eloBoost ficam neste computador."
-        action={
-          database.data != null ? (
-            <Badge tone={database.data.healthy ? 'ok' : 'critical'}>
-              {database.data.healthy ? 'Íntegro' : 'Requer atenção'}
-            </Badge>
-          ) : undefined
-        }
-      />
-      <CardBody>
-        {database.status === 'loading' && <Skeleton className="h-24 w-full" />}
-
-        {database.status === 'error' && database.error != null && (
-          <ErrorState error={database.error} onRetry={database.reload} showTechnicalDetails />
-        )}
-
-        {database.status === 'success' && database.data != null && (
-          <div className="space-y-4">
-            <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-              <div>
-                <dt className="text-fg-muted">Versão do schema</dt>
-                <dd className="mt-0.5 font-medium text-fg tabular" data-numeric>
-                  {database.data.schemaVersion} de {database.data.expectedVersion}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-fg-muted">Tamanho</dt>
-                <dd className="mt-0.5 font-medium text-fg tabular" data-numeric>
-                  {formatBytes(database.data.sizeBytes)}
-                </dd>
-              </div>
-              <div className="col-span-2">
-                <dt className="text-fg-muted">Local</dt>
-                <dd className="mt-0.5 font-mono text-[0.75rem] text-fg-secondary selectable">
-                  {database.data.databasePathMasked}
-                </dd>
-              </div>
-            </dl>
-
-            <div>
-              <h3 className="text-[0.8125rem] font-semibold text-fg">Migrations aplicadas</h3>
-              <ul className="mt-2 divide-y divide-subtle rounded-[8px] border border-subtle">
-                {database.data.appliedMigrations.map((migration) => (
-                  <li
-                    key={migration.version}
-                    className="flex items-center justify-between gap-4 px-3 py-2 text-[0.8125rem]"
-                  >
-                    <span className="text-fg-secondary">
-                      <span className="font-mono text-fg-muted tabular" data-numeric>
-                        {String(migration.version).padStart(4, '0')}
-                      </span>{' '}
-                      {migration.name}
-                    </span>
-                    <span className="shrink-0 text-fg-muted tabular" data-numeric>
-                      {formatDateTime(migration.appliedAt)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-      </CardBody>
-    </Card>
+    <Badge tone="neutral" className="tabular">
+      {/* Texto num só nó: fica mais previsível para leitores de tela e para os
+          testes do que uma interpolação partida em vários nós. */}
+      <span>{`versão ${runtime.data.version}`}</span>
+      {runtime.data.buildProfile === 'debug' && (
+        <span className="font-normal text-fg-muted">· desenvolvimento</span>
+      )}
+    </Badge>
   );
 }
 
+function PrincipleCard({ principle, index }: { principle: Principle; index: number }) {
+  const Icon = principle.icon;
+
+  return (
+    <StaggerItem index={index}>
+      <Card className="h-full">
+        <CardHeader
+          icon={<Icon className="size-4" />}
+          title={principle.title}
+          description={principle.summary}
+        />
+        <CardBody>
+          <ul className="space-y-2.5">
+            {principle.points.map((point) => (
+              <li
+                key={point}
+                className="flex items-start gap-2.5 text-[0.8125rem] leading-relaxed text-fg-secondary"
+              >
+                <span aria-hidden className="mt-1.5 size-1 shrink-0 rounded-full bg-accent" />
+                {point}
+              </li>
+            ))}
+          </ul>
+        </CardBody>
+      </Card>
+    </StaggerItem>
+  );
+}
+
+/**
+ * Página Sobre.
+ *
+ * Escrita para o usuário, não para o desenvolvedor: explica o que o eloBoost é,
+ * como ele trata segurança, privacidade e transparência. Diagnóstico técnico —
+ * banco de dados, schema, caminhos, alvo de compilação — vive no dashboard e
+ * nos logs, não aqui.
+ */
 export function AboutPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Sobre"
-        description="Versão, diagnóstico local e os compromissos que o eloBoost assume com você."
+        title="Sobre o eloBoost"
+        description="Um utilitário de manutenção para Windows 10 e 11, feito para ser confiável antes de ser rápido."
+        action={<VersionBadge />}
       />
 
-      <div className="grid items-start gap-5 lg:grid-cols-2">
-        <StaggerItem index={0}>
-          <AppInfoCard />
-        </StaggerItem>
-        <StaggerItem index={1}>
-          <DatabaseCard />
-        </StaggerItem>
+      <StaggerItem index={0}>
+        <Card>
+          <CardHeader
+            icon={<Info className="size-4" />}
+            title="O que é o eloBoost"
+            description="Ferramentas de manutenção reunidas num só lugar, com o cuidado que o seu computador merece."
+          />
+          <CardBody>
+            <div className="grid gap-5 text-sm leading-relaxed text-fg-secondary md:grid-cols-2">
+              <p>
+                Com o tempo, todo computador acumula arquivos temporários, programas que abrem
+                sozinhos e configurações que ninguém lembra de ter mudado. O eloBoost reúne as
+                ferramentas para cuidar disso — limpeza, análise de espaço, gerenciamento de
+                inicialização e ajustes de desempenho — numa interface que explica cada passo.
+              </p>
+              <p>
+                A ideia por trás do projeto é simples: um aplicativo de manutenção precisa ser
+                confiável antes de ser rápido. Toda ação é reversível ou avisa claramente quando não
+                é, cada número exibido vem de uma leitura real do seu computador, e você decide o
+                que acontece.
+              </p>
+            </div>
+
+            <div className="mt-5 flex items-center gap-2.5 rounded-[10px] border border-subtle bg-base/40 px-4 py-3">
+              <MonitorCheck
+                aria-hidden
+                className="size-4 shrink-0 text-accent"
+                strokeWidth={1.75}
+              />
+              <p className="text-[0.8125rem] text-fg-secondary">
+                Desenvolvido especificamente para{' '}
+                <strong className="font-medium text-fg">Windows 10 e Windows 11</strong>,
+                aproveitando as ferramentas oficiais do próprio sistema.
+              </p>
+            </div>
+          </CardBody>
+        </Card>
+      </StaggerItem>
+
+      <div className="grid items-start gap-5 lg:grid-cols-3">
+        {PRINCIPLES.map((principle, index) => (
+          <PrincipleCard key={principle.title} principle={principle} index={index + 1} />
+        ))}
       </div>
-
-      <StaggerItem index={2}>
-        <Card>
-          <CardHeader
-            icon={<Ban className="size-4" />}
-            title="O que o eloBoost nunca faz"
-            description="Estes limites são parte da arquitetura do produto, não apenas uma promessa."
-          />
-          <CardBody>
-            <ul className="space-y-2">
-              {NEVER_DOES.map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm text-fg-secondary">
-                  <Ban aria-hidden className="mt-0.5 size-4 shrink-0 text-critical" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </CardBody>
-        </Card>
-      </StaggerItem>
-
-      <StaggerItem index={3}>
-        <Card>
-          <CardHeader
-            icon={<ShieldCheck className="size-4" />}
-            title="Como o eloBoost protege seus dados"
-            description="Resumo do modelo de segurança documentado no repositório."
-          />
-          <CardBody>
-            <ul className="space-y-2 text-sm text-fg-secondary">
-              <li>• Toda alteração de configuração cria um backup antes de ser aplicada.</li>
-              <li>• Nenhum arquivo é removido sem análise prévia e confirmação explícita.</li>
-              <li>
-                • A interface não constrói caminhos de arquivo: ela só manipula identificadores
-                devolvidos pelo backend.
-              </li>
-              <li>
-                • A elevação de privilégio é pedida por operação, com explicação antes do UAC.
-              </li>
-              <li>• Os logs não registram senhas, tokens nem conteúdo de arquivos.</li>
-            </ul>
-          </CardBody>
-        </Card>
-      </StaggerItem>
     </div>
   );
 }

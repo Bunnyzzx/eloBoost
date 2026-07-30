@@ -47,7 +47,7 @@ export interface NavEntry {
   label: string;
   icon: LucideIcon;
   group: NavGroup;
-  /** Descrição curta usada em tooltip quando a barra lateral está recolhida. */
+  /** Descrição curta da tela, exibida no cabeçalho e no estado vazio. */
   description: string;
   /** Épico que entrega a funcionalidade real desta tela. */
   plannedIn: string;
@@ -147,7 +147,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: 'Sobre',
     icon: Info,
     group: 'system',
-    description: 'Versão, diagnóstico e compromissos do produto',
+    description: 'O que é o eloBoost e os compromissos do produto',
     plannedIn: 'Épico 0',
   },
 ] as const;

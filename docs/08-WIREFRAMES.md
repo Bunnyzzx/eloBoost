@@ -76,7 +76,7 @@ verdade, com um teste que falha se divergirem.
 |---|---|---|
 | `instant` | 120 ms | hover, pressionar, troca de cor |
 | `base` | 180 ms | entrada de elemento, fade, transição de página |
-| `slow` | 240 ms | recolher a barra lateral, abrir modal |
+| `slow` | 240 ms | abrir modal, barra de progresso |
 | `ease` | `cubic-bezier(0.2, 0, 0, 1)` | único easing do sistema, sem overshoot |
 | `offset.subtle` | 6 px | entrada de card |
 | `offset.page` | 8 px | entrada de página e de seção |
@@ -120,9 +120,10 @@ Regras:
 │ ⚙ Config. │                                                                    │
 │ ⓘ Sobre   │                                                                    │
 │           │                                                                    │
-│ ▸ recolher│                                                                    │
+│           │                                                                    │
 └───────────┴────────────────────────────────────────────────────────────────────┘
-  240px (colapsa para 64px < 1100px de largura ou por escolha do usuário)
+  224px, largura fixa — a navegação é curta o bastante para caber sempre, e um
+  segundo estado da barra custaria mais em complexidade do que devolve em espaço.
 ```
 
 O chip `🛡 Normal` no header mostra o nível de privilégio atual; vira `🛡 Elevado (4:32)` com
@@ -131,12 +132,12 @@ contagem regressiva durante uma sessão elevada, com ação "Encerrar agora".
 ### Responsividade
 | Resolução | Comportamento |
 |---|---|
-| 1280×720 | Sidebar 240px, grid de cards 2 colunas, header compacto |
+| 1280×720 | Sidebar 224px, grid de cards 2 colunas, header compacto |
 | 1366×768 | Idem, grid 3 colunas em telas de listagem |
 | 1920×1080 | Grid 4 colunas, conteúdo centralizado com `max-w: 1440px` |
 | 2K/4K | Mesmo layout; tipografia em `rem` acompanha a escala do Windows |
 | Escala 125% / 150% | Testado: nenhuma unidade em `px` fixo para texto; ícones em `em`; alturas mínimas em `rem` |
-| Janela mínima | 1024×640 (definida no `tauri.conf.json`); abaixo disso a sidebar colapsa e tabelas rolam horizontalmente |
+| Janela mínima | 1024×640 (definida no `tauri.conf.json`); a sidebar mantém os 224px e as tabelas rolam horizontalmente |
 
 ---
 
@@ -429,8 +430,12 @@ telemetria — **desativada por padrão**, com lista exata do que seria enviado;
 locais; restaurar padrões).
 
 ### 3.12 Sobre
-Versão, changelog, licenças de terceiros, política de privacidade, avisos de segurança,
-"o que o eloBoost nunca faz" (lista explícita), links locais para a documentação.
+O que o eloBoost é e para quem, seguido dos três princípios do produto — segurança, privacidade e
+transparência — cada um com os compromissos concretos que o sustentam. Mais versão, changelog,
+licenças de terceiros e links locais para a documentação. A página é escrita para o usuário final:
+diagnóstico técnico (banco de dados, schema, caminhos, alvo de compilação) vive no dashboard e nos
+logs, não aqui, e os compromissos são afirmações do que o aplicativo faz — não uma lista do que ele
+deixa de prometer.
 
 ### 3.13 Autenticação (opcional)
 Tela existe apenas para a conta Pro futura. **Todas as funções locais funcionam sem conta.**

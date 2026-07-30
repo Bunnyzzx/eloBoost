@@ -1,31 +1,12 @@
-import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import { ErrorBoundary } from '@/components/feedback/ErrorBoundary';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { PageTransition } from '@/components/motion/PageTransition';
-import { useUiStore } from '@/stores/uiStore';
-
-/** Abaixo desta largura a barra lateral recolhe sozinha (docs/08 §2). */
-const COLLAPSE_BREAKPOINT_PX = 1100;
 
 export function AppLayout() {
-  const setSidebarCollapsed = useUiStore((state) => state.setSidebarCollapsed);
   const { pathname } = useLocation();
-
-  // Recolhe automaticamente em janelas estreitas (1280×720 continua confortável).
-  useEffect(() => {
-    const query = window.matchMedia(`(max-width: ${COLLAPSE_BREAKPOINT_PX}px)`);
-    const apply = (matches: boolean) => {
-      if (matches) setSidebarCollapsed(true);
-    };
-
-    apply(query.matches);
-    const listener = (event: MediaQueryListEvent) => apply(event.matches);
-    query.addEventListener('change', listener);
-    return () => query.removeEventListener('change', listener);
-  }, [setSidebarCollapsed]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-base">

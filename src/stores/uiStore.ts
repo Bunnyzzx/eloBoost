@@ -23,7 +23,6 @@ export interface Toast {
 
 export interface UiState {
   theme: Theme;
-  sidebarCollapsed: boolean;
   reduceMotion: boolean;
   /** Escala da interface: 0.9 a 1.3 (docs/08 §6 — fonte ajustável). */
   uiScale: number;
@@ -31,8 +30,6 @@ export interface UiState {
   toasts: Toast[];
 
   setTheme: (theme: Theme) => void;
-  toggleSidebar: () => void;
-  setSidebarCollapsed: (collapsed: boolean) => void;
   setReduceMotion: (reduce: boolean) => void;
   setUiScale: (scale: number) => void;
   setAdvancedMode: (enabled: boolean) => void;
@@ -58,15 +55,12 @@ function clampScale(scale: number): number {
 
 export const useUiStore = create<UiState>((set) => ({
   theme: 'dark',
-  sidebarCollapsed: false,
   reduceMotion: false,
   uiScale: 1,
   advancedMode: false,
   toasts: [],
 
   setTheme: (theme) => set({ theme }),
-  toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
-  setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
   setReduceMotion: (reduceMotion) => set({ reduceMotion }),
   setUiScale: (scale) => set({ uiScale: clampScale(scale) }),
   setAdvancedMode: (advancedMode) => set({ advancedMode }),

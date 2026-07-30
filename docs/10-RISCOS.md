@@ -28,7 +28,7 @@ Status: **Entrega 1 — planejamento**.
 | # | Risco | Mitigação |
 |---|---|---|
 | R-15 | Usuário espera "ganho de FPS" e se frustra | Comunicação honesta desde o onboarding; métricas reais antes/depois; nenhuma promessa numérica |
-| R-16 | Percepção de "mais um limpador duvidoso" | Transparência radical: caminhos analisados visíveis, critérios de saúde abertos, "o que o eloBoost nunca faz" na tela Sobre, sem pop-ups de venda |
+| R-16 | Percepção de "mais um limpador duvidoso" | Transparência radical: caminhos analisados visíveis, critérios de saúde abertos, compromissos de segurança e privacidade afirmados na tela Sobre, sem pop-ups de venda |
 | R-17 | Usuário limpa cookies e perde sessões | Cookies nunca marcados por padrão; aviso explícito; separação clara entre cache e dados de sessão |
 | R-18 | Usuário desativa algo essencial na inicialização | Itens protegidos bloqueados; avisos críticos; reversão em um clique no histórico |
 | R-19 | Escopo cresce indefinidamente | Escopos MVP/1.0/futuro fechados no doc 09; Laboratório isola experimentos |

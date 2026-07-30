@@ -7,6 +7,26 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Não lançado]
 
+### Alterado — refinamento do Épico 1
+
+- **Barra lateral fixa**: o recolhimento foi removido por inteiro (botão, estado persistido,
+  tooltips do modo estreito). A largura caiu de 240 px para 224 px, devolvendo espaço ao dashboard
+  sem alterar espaçamentos, alinhamento dos ícones nem a identidade visual.
+- **Card "eloBoost"** reduzido ao que interessa ao usuário: versão, estado da comunicação,
+  privilégio e horário da última leitura. Caminho do banco, schema, tamanho do arquivo, alvo de
+  compilação e pasta de dados saíram — são diagnóstico de desenvolvedor. O perfil de compilação
+  aparece apenas em builds de desenvolvimento. Nenhum valor escapa mais das bordas do card.
+- **Página Sobre** reescrita para o usuário final, em torno de Segurança, Privacidade e
+  Transparência. O card de diagnóstico do banco de dados e a lista de promessas negativas
+  (incluindo a menção a FPS) foram removidos.
+- **Campos indisponíveis** na ficha técnica passam a exibir o rótulo curto `não disponível`, com o
+  motivo completo em tooltip acessível por mouse e por teclado — a frase por extenso repetida em
+  várias linhas dominava o card.
+- Rótulos `Edição` e `Versão` viraram `Edição do Windows` e `Versão do Windows`, para não colidirem
+  com a versão do aplicativo exibida ao lado.
+- Títulos de card quebram em duas linhas em vez de serem cortados; descrições de cabeçalho de tela
+  usam `text-pretty` para evitar a última linha com uma palavra só.
+
 ### Adicionado — Épico 1: dashboard com dados reais do sistema
 
 **Backend (somente leitura)**
@@ -48,7 +68,7 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
   `Modal` com retenção de foco, `Toast`, `Toggle`, `Tooltip`, `Skeleton`, `EmptyState`,
   `ErrorState`.
 - Tema escuro como padrão e tema claro completo, alternáveis em tempo de execução.
-- Layout com barra lateral recolhível, cabeçalho com trilha de contexto e área principal
+- Layout com barra lateral fixa, cabeçalho com trilha de contexto e área principal
   responsiva (1080 px a 2K, escala de interface de 90% a 130%).
 - Roteamento com 12 telas registradas; rota desconhecida volta ao início.
 - Marca própria do eloBoost em SVG, e conjunto de ícones do instalador gerado a partir dela.

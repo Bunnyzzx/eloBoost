@@ -21,28 +21,37 @@ monitoramento e ajustes de desempenho — com três compromissos inegociáveis:
 3. **Transparência total**: os caminhos analisados, os critérios de saúde e a origem de cada
    métrica são exibidos ao usuário.
 
-## O que o eloBoost nunca fará
+## Limites do produto
 
-- Desativar Windows Defender, firewall ou Windows Update.
-- Prometer ganho de FPS ou qualquer número de desempenho não medido.
-- Apagar arquivos pessoais sem seleção explícita, item a item.
-- Executar comandos arbitrários vindos da interface.
-- Rodar como administrador o tempo todo, ou contornar o UAC.
-- Coletar nomes de arquivos, documentos, senhas ou histórico de navegação.
-- Usar pop-ups agressivos ou padrões enganosos de compra.
+Estes limites são parte da arquitetura, não apenas uma intenção:
+
+- Todo número exibido vem de uma leitura real do computador. Quando um dado não pode ser lido, o
+  aplicativo diz isso em vez de estimar.
+- Arquivos pessoais só são removidos com seleção explícita, item a item.
+- A interface não executa comandos arbitrários: apenas operações nomeadas e validadas.
+- A elevação de privilégio é pedida por operação, com explicação antes — nunca para a sessão
+  inteira, e nunca contornando o UAC.
+- Mecanismos de segurança do Windows (Defender, firewall, Windows Update) não são desativados.
+- Nada é coletado ou enviado: sem nomes de arquivos, documentos, senhas ou histórico.
+- Sem pop-ups agressivos nem padrões enganosos de compra.
 
 ## Capturas de tela
 
 O dashboard, com dados reais lidos do sistema:
 
-![Dashboard com dados reais](screenshots/19-inicio-aplicativo-real.png)
+![Dashboard com dados reais](screenshots/18-inicio-aplicativo-real.png)
+
+A ficha técnica completa. Os campos que este sistema não expõe aparecem como `não disponível`, com
+o motivo ao passar o mouse — nunca zerados:
+
+![Ficha técnica com dados reais](screenshots/19-ficha-tecnica-aplicativo-real.png)
 
 | Sobre | Tema claro |
 | --- | --- |
 | ![Sobre](screenshots/12-sobre.png) | ![Tema claro](screenshots/13-tema-claro.png) |
 
 As 19 capturas de `screenshots/` cobrem as 12 telas, os dois temas, as resoluções 1280×720,
-1366×768, 1920×1080, a barra lateral recolhida e o aplicativo real em execução.
+1366×768, 1920×1080 e o aplicativo real em execução.
 
 Para regenerá-las:
 
@@ -125,11 +134,11 @@ pnpm verify:rust      # cargo fmt --check + clippy -D warnings + cargo test
 # Individualmente
 pnpm typecheck
 pnpm lint
-pnpm test             # 100 testes do frontend
+pnpm test             # 141 testes do frontend
 pnpm test:watch
 pnpm test:coverage
 
-cargo test --workspace --all-features   # 53 testes do backend
+cargo test --workspace --all-features   # 103 testes do backend
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo fmt --all --check
 ```
@@ -146,7 +155,7 @@ CC_x86_64_pc_windows_gnu=x86_64-w64-mingw32-gcc \
 ```
 
 Validação da camada de animações num navegador real — navegação rápida, ausência de deslocamento
-de layout, barra lateral recolhida funcional e `prefers-reduced-motion` efetivo:
+de layout, barra lateral de largura estável e `prefers-reduced-motion` efetivo:
 
 ```bash
 pnpm build

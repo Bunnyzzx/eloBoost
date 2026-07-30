@@ -70,7 +70,12 @@ export function CardHeader({ title, description, action, icon, className }: Card
           </span>
         )}
         <div className="min-w-0">
-          <h2 className="truncate text-[0.9375rem] font-semibold text-fg">{title}</h2>
+          {/*
+            Títulos de card são textos do produto, não dados do usuário: quebrar
+            em duas linhas é sempre melhor do que cortar ("Segurança em primeiro
+            lu…"). `break-words` protege contra uma palavra longa demais.
+          */}
+          <h2 className="text-[0.9375rem] font-semibold break-words text-fg">{title}</h2>
           {description != null && (
             <p className="mt-0.5 text-[0.8125rem] leading-relaxed text-fg-secondary">
               {description}

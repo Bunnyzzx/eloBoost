@@ -79,13 +79,30 @@ export function InfoRow({
       <dd
         className={cn(
           'min-w-0 text-right text-[0.8125rem]',
-          unavailableMessage != null ? 'text-fg-muted italic' : 'font-medium text-fg',
+          unavailableMessage != null ? 'text-fg-muted' : 'font-medium text-fg',
           selectable && 'selectable',
           numeric && 'tabular',
         )}
         data-numeric={numeric ? '' : undefined}
       >
-        {unavailableMessage ?? content}
+        {unavailableMessage != null ? (
+          /*
+            O motivo por extenso ("Informação não suportada neste dispositivo.")
+            repetido em três linhas seguidas dominava o card e empurrava os dados
+            que existem para segundo plano. O rótulo curto mantém a lista legível
+            e o motivo completo continua a um hover — ou a um Tab — de distância.
+          */
+          <Tooltip content={unavailableMessage} side="left">
+            <span
+              tabIndex={0}
+              className="cursor-help rounded-[4px] underline decoration-dotted underline-offset-[3px]"
+            >
+              não disponível
+            </span>
+          </Tooltip>
+        ) : (
+          content
+        )}
       </dd>
     </div>
   );

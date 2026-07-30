@@ -14,8 +14,10 @@ export function PageHeader({ title, description, action, className }: PageHeader
     <div className={cn('flex items-start justify-between gap-6', className)}>
       <div className="min-w-0">
         <h1 className="text-xl font-semibold tracking-tight text-fg">{title}</h1>
+        {/* `text-pretty` evita a última linha com uma palavra só: o navegador
+            reequilibra a quebra em vez de deixar a órfã. */}
         {description != null && (
-          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-fg-secondary">
+          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-pretty text-fg-secondary">
             {description}
           </p>
         )}

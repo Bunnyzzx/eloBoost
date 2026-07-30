@@ -109,7 +109,6 @@ export function DashboardPage() {
             <SystemDetailsCard snapshot={data} loading={firstLoad} />
             <AppStatusCard
               privileges={data?.privileges ?? null}
-              collectionMs={data?.collectionMs ?? null}
               collectedAt={data?.collectedAt ?? null}
             />
           </div>

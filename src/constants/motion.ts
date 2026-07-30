@@ -22,7 +22,7 @@ export const DURATION = {
   instant: 120,
   /** Padrão: entrada de elemento, fade, transição de página. */
   base: 180,
-  /** Movimentos maiores: recolher a barra lateral, abrir modal. */
+  /** Movimentos maiores: abrir modal, barra de progresso. */
   slow: 240,
 } as const;
 

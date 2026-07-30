@@ -1,8 +1,6 @@
 import { cn } from '@/utils/cn';
 
 export interface LogoProps {
-  /** Exibe apenas a marca, sem o texto. */
-  compact?: boolean;
   className?: string;
 }
 
@@ -50,16 +48,14 @@ export function LogoMark({ className }: { className?: string }) {
   );
 }
 
-export function Logo({ compact = false, className }: LogoProps) {
+export function Logo({ className }: LogoProps) {
   return (
     <span className={cn('flex items-center gap-2.5', className)}>
       <LogoMark />
-      {!compact && (
-        <span className="text-[0.9375rem] tracking-tight text-fg">
-          <span className="font-normal text-fg-secondary">elo</span>
-          <span className="font-semibold">Boost</span>
-        </span>
-      )}
+      <span className="text-[0.9375rem] tracking-tight text-fg">
+        <span className="font-normal text-fg-secondary">elo</span>
+        <span className="font-semibold">Boost</span>
+      </span>
     </span>
   );
 }

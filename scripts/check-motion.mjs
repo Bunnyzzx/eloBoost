@@ -4,7 +4,7 @@
  * Mede, num navegador real, o que testes de unidade não alcançam:
  *   • a navegação continua rápida;
  *   • nenhuma animação desloca o layout (o topo dos cards não se move);
- *   • a barra lateral recolhida continua funcional e clicável;
+ *   • a barra lateral tem largura fixa e navega corretamente;
  *   • `prefers-reduced-motion` efetivamente remove transições e deslocamentos.
  *
  * Uso:
@@ -82,35 +82,29 @@ try {
   );
 
   // ─────────────────────────────────────────────────────────────
-  // 2. Barra lateral recolhida continua funcional
+  // 2. Barra lateral fixa e funcional
   // ─────────────────────────────────────────────────────────────
   await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
-  const larguraExpandida = await page.locator('aside').evaluate((n) => n.clientWidth);
 
-  await page.getByRole('button', { name: /Recolher barra lateral/ }).click();
-  await page.waitForTimeout(400);
-  const larguraRecolhida = await page.locator('aside').evaluate((n) => n.clientWidth);
-
-  verificar(
-    'a barra lateral muda de largura ao recolher',
-    larguraRecolhida < larguraExpandida,
-    `${larguraExpandida}px → ${larguraRecolhida}px`,
-  );
+  const larguraInicial = await page.locator('aside').evaluate((n) => n.clientWidth);
 
   await page.getByRole('link', { name: 'Histórico' }).click();
-  const navegouRecolhida = await page
+  const navegou = await page
     .getByRole('heading', { level: 1, name: 'Histórico' })
     .waitFor({ timeout: 2000 })
     .then(() => true)
     .catch(() => false);
-  verificar('navegação funciona com a barra lateral recolhida', navegouRecolhida);
+  verificar('navegação pela barra lateral funciona', navegou);
 
-  const tooltipVisivel = await page
-    .getByRole('link', { name: 'Limpeza' })
-    .hover()
-    .then(() => page.getByRole('tooltip', { name: 'Limpeza' }).isVisible())
-    .catch(() => false);
-  verificar('o tooltip substitui o rótulo quando recolhida', tooltipVisivel);
+  const larguraDepois = await page.locator('aside').evaluate((n) => n.clientWidth);
+  verificar(
+    'a barra lateral mantém largura fixa ao trocar de tela',
+    larguraInicial === larguraDepois,
+    `${larguraInicial}px → ${larguraDepois}px`,
+  );
+
+  const semBotaoRecolher = (await page.getByRole('button', { name: /Recolher/i }).count()) === 0;
+  verificar('não existe mais controle de recolher a barra lateral', semBotaoRecolher);
 
   await page.close();
 
@@ -124,7 +118,11 @@ try {
   await paginaReduzida.goto(`${baseUrl}/sobre`, { waitUntil: 'networkidle' });
   await paginaReduzida.waitForTimeout(300);
 
-  const conteudoVisivel = await paginaReduzida.getByText('O que o eloBoost nunca faz').isVisible();
+  // O último card da página Sobre: se ele está visível sem rolagem nem
+  // animação, nada ficou preso esperando um efeito que não vai acontecer.
+  const conteudoVisivel = await paginaReduzida
+    .getByRole('heading', { name: 'Transparência' })
+    .isVisible();
   verificar('com movimento reduzido, todo o conteúdo permanece visível', conteudoVisivel);
 
   const duracoes = await paginaReduzida.$$eval('[class*="rounded-card"]', (nodes) =>
