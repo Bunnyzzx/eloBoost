@@ -33,8 +33,9 @@ describe('InfoRow', () => {
     );
 
     expect(screen.getByText('não disponível')).toBeInTheDocument();
-    // A frase longa não ocupa a linha — ela vive no tooltip.
-    expect(screen.queryByText(INDISPONIVEL.message)).not.toBeVisible();
+    // A frase longa não ocupa a linha — ela vive no tooltip, que só é montado
+    // quando o gatilho recebe ponteiro ou foco.
+    expect(screen.queryByText(INDISPONIVEL.message)).not.toBeInTheDocument();
   });
 
   it('revela o motivo completo ao passar o mouse', async () => {

@@ -103,7 +103,7 @@ export function Modal({
   return createPortal(
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-100 grid place-items-center p-6">
+        <div className="fixed inset-0 z-(--elo-z-overlay) grid place-items-center p-6">
           <motion.div
             className="absolute inset-0 bg-overlay backdrop-blur-[2px]"
             initial={{ opacity: 0 }}

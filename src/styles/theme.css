@@ -53,6 +53,18 @@
   --elo-radius-card: 14px;
   --elo-radius-modal: 20px;
 
+  /* ── Camadas ──
+     A ordem de empilhamento do produto declarada num lugar só. Antes cada
+     componente escolhia o próprio `z-50`/`z-100`, e a única forma de saber
+     quem ficava por cima de quem era abrir os dois arquivos.
+
+     O tooltip é deliberadamente o topo da pilha: ele descreve um elemento que
+     está por baixo, então nunca pode ser encoberto por aquilo que explica —
+     nem pelo diálogo modal em que o gatilho vive. */
+  --elo-z-overlay: 100; /* véu e diálogo modal */
+  --elo-z-toast: 200;
+  --elo-z-tooltip: 300;
+
   /* ── Movimento ──
      Espelha src/constants/motion.ts. Os dois devem mudar juntos; o teste
      motion.test.ts falha se divergirem.

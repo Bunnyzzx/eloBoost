@@ -83,7 +83,12 @@ export function StatCard({
               {value}
             </p>
             {detail != null && (
-              <p className="mt-1 truncate text-[0.75rem] text-fg-muted">{detail}</p>
+              <p
+                className="mt-1 truncate text-[0.75rem] text-fg-muted"
+                title={typeof detail === 'string' ? detail : undefined}
+              >
+                {detail}
+              </p>
             )}
           </>
         )}

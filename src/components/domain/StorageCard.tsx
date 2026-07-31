@@ -36,6 +36,10 @@ export function StorageCard({ disk, className }: StorageCardProps) {
 
   const Icon = disk.isRemovable ? Usb : disk.isSystem ? MonitorSmartphone : HardDrive;
 
+  const descricao = [label, mediaTypeLabel(disk.mediaType), fileSystem]
+    .filter((part): part is string => part != null && part.length > 0)
+    .join(' · ');
+
   return (
     <Card className={cn('p-4', className)}>
       <div className="flex items-start justify-between gap-3">
@@ -49,17 +53,19 @@ export function StorageCard({ disk, className }: StorageCardProps) {
 
           <div className="min-w-0">
             <p className="flex items-center gap-2 text-sm font-semibold text-fg">
-              <span className="truncate">{disk.mountPoint}</span>
+              {/* O rótulo do volume é escolhido pelo usuário e pode ser longo:
+                  truncar sem `title` esconderia o dado sem oferecer saída. */}
+              <span className="truncate" title={disk.mountPoint}>
+                {disk.mountPoint}
+              </span>
               {disk.isSystem && (
                 <span className="shrink-0 rounded-full border border-subtle bg-elevated px-1.5 py-px text-[0.625rem] font-normal text-fg-muted">
                   sistema
                 </span>
               )}
             </p>
-            <p className="truncate text-[0.75rem] text-fg-muted">
-              {[label, mediaTypeLabel(disk.mediaType), fileSystem]
-                .filter((part): part is string => part != null && part.length > 0)
-                .join(' · ')}
+            <p className="truncate text-[0.75rem] text-fg-muted" title={descricao}>
+              {descricao}
             </p>
           </div>
         </div>

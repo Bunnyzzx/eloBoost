@@ -68,6 +68,28 @@ uma garantia do sistema de tipos, não uma convenção.
   `undo_kind` é gravado como `'none'`: enquanto a restauração não existir, nenhum registro pode
   sugerir que ela existe.
 
+### Corrigido — refinamento de UX antes do fecho do Épico 3
+
+- **Tooltips cortados pelos limites dos cards.** O balão era um filho posicionado do gatilho, então
+  o `overflow-y-auto` do `<main>` e o `overflow-hidden` da moldura da aplicação recortavam o que
+  passasse das suas bordas. Agora ele é renderizado num portal para o `<body>`, em coordenadas de
+  janela: fora da árvore rolável não existe ancestral que possa cortá-lo. `position: fixed` também
+  o livra dos `transform` das animações de página, que criariam um bloco de contenção próprio.
+- **O balão vira de lado e desliza para dentro.** Se o lado preferido não tem espaço, ele usa o
+  oposto; se ainda assim ultrapassaria uma borda, desliza no eixo transversal até caber, com 8 px
+  de respiro. Era este o caso do chip de privilégio no canto direito do cabeçalho, cujo balão
+  passava 17 px além da janela.
+- **Escala de camadas declarada em um lugar só** (`--elo-z-overlay` · `--elo-z-toast` ·
+  `--elo-z-tooltip`). Antes cada componente escolhia o próprio `z-50`/`z-100`. O tooltip é
+  deliberadamente o topo da pilha: ele descreve algo que está por baixo, então não pode ser
+  encoberto por aquilo que explica — nem pelo diálogo modal em que o gatilho vive.
+- Valores truncados que não tinham saída ganharam `title`: rótulo do volume e a linha de descrição
+  do `StorageCard`, e o detalhe do `StatCard`.
+- `scripts/check-tooltips.mjs` (`pnpm check:tooltips`) percorre num navegador real todos os
+  gatilhos de todas as telas e falha se um balão sair da janela, for recortado por um ancestral com
+  `overflow` ou for encoberto por outro elemento. Verificado que ele acusa 69 falhas no código
+  anterior e nenhuma no atual.
+
 ### Adicionado — Épico 2: infraestrutura de análise (somente leitura)
 
 Nenhum arquivo é aberto, alterado, movido ou removido. Esta etapa mede — a limpeza é o Épico 3.
@@ -78,7 +100,7 @@ Nenhum arquivo é aberto, alterado, movido ou removido. Esta etapa mede — a li
   lista de arquivos nunca entra na memória. Uma pasta com 200 mil arquivos custa o mesmo que uma
   com dez.
 - **Links nunca são seguidos.** Cada entrada é lida com metadados que não atravessam o link e, no
-  Windows, também pelo atributo de *reparse point* — que cobre *junctions*, invisíveis para
+  Windows, também pelo atributo de _reparse point_ — que cobre _junctions_, invisíveis para
   `is_symlink`. Uma junction para `C:\Users` dentro de `%TEMP%` não faz a análise medir a pasta
   pessoal inteira.
 - Nenhum erro interrompe a análise: acesso negado, caminho longo demais, arquivo em uso e falhas de

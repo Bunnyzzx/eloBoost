@@ -88,7 +88,7 @@ export function ToastViewport() {
     <ul
       aria-live="polite"
       aria-relevant="additions"
-      className="pointer-events-none fixed right-5 bottom-5 z-100 flex flex-col-reverse gap-2.5"
+      className="pointer-events-none fixed right-5 bottom-5 z-(--elo-z-toast) flex flex-col-reverse gap-2.5"
     >
       <AnimatePresence initial={false}>
         {toasts.map((toast) => (
