@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Permissões mínimas da janela principal do eloBoost. Contém apenas os comandos nomeados do próprio aplicativo — nenhum plugin de shell, sistema de arquivos ou HTTP é concedido à interface, de modo que a execução de comandos arbitrários seja impossível por construção (docs/05 §3).",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}
