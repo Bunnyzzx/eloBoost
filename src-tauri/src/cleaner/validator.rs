@@ -408,8 +408,24 @@ fn has_suspicious_components(path: &Path) -> bool {
         return true;
     }
 
-    path.components()
+    // A verificação de `..` é feita **duas vezes**, de propósito.
+    //
+    // `Components` entende a semântica do caminho, mas num caminho *verbatim*
+    // do Windows (`\\?\C:\...`) o Rust desliga a normalização: ali `..` chega
+    // como `Component::Normal("..")` e passaria batido. Como toda raiz do
+    // PathGuard é canonicalizada — e no Windows `canonicalize` devolve
+    // exatamente um caminho verbatim —, esse é o caso comum, não o exótico.
+    //
+    // A varredura textual dos segmentos não depende de plataforma nem de
+    // prefixo, e é ela que fecha o buraco.
+    if path
+        .components()
         .any(|component| matches!(component, Component::ParentDir))
+    {
+        return true;
+    }
+
+    text.split(['\\', '/']).any(|segment| segment == "..")
 }
 
 /// `true` quando os metadados indicam um reparse point do Windows.
@@ -639,6 +655,24 @@ mod tests {
         // "System32Backup" não é System32.
         assert!(!is_denylisted(Path::new(r"C:\Temp\System32Backup\a.tmp")));
         assert!(!is_denylisted(Path::new(r"C:\Temp\meu-pagefile.sys.bak")));
+    }
+
+    #[test]
+    fn a_travessia_e_detectada_mesmo_em_caminho_verbatim_do_windows() {
+        // Regressão: num caminho `\\?\C:\...` o Rust não interpreta `..` como
+        // `ParentDir`, e a verificação por componentes sozinha deixava passar.
+        // Como toda raiz canonicalizada no Windows é verbatim, esse era o caso
+        // comum — não uma curiosidade.
+        assert!(has_suspicious_components(Path::new(
+            r"\\?\C:\Users\ana\AppData\Local\Temp\sub\..\..\alvo.tmp"
+        )));
+        assert!(has_suspicious_components(Path::new("/tmp/sub/../alvo.tmp")));
+
+        // Um nome que apenas *contém* pontos não é travessia.
+        assert!(!has_suspicious_components(Path::new(
+            r"C:\Temp\arquivo..backup.tmp"
+        )));
+        assert!(!has_suspicious_components(Path::new(r"\\?\C:\Temp\a.tmp")));
     }
 
     #[test]

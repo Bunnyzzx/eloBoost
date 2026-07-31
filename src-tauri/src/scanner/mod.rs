@@ -423,11 +423,18 @@ mod tests {
     use std::fs::File;
     use std::io::Write as _;
 
-    /// Nome, tamanho e data de modificação de cada item de uma árvore.
+    /// Manifesto de uma árvore, para provar que a análise não alterou nada.
     ///
-    /// Serve para provar que a análise não alterou nada: se um único byte, um
-    /// tamanho ou um carimbo de tempo mudar, a comparação falha.
-    fn manifesto(raiz: &Path) -> Vec<(PathBuf, u64, Option<std::time::SystemTime>)> {
+    /// Guarda **arquivos** com nome, tamanho e data de modificação, e as pastas
+    /// apenas pelo caminho.
+    ///
+    /// A data das pastas fica de fora de propósito: o NTFS atualiza o carimbo de
+    /// um diretório de forma preguiçosa, e o valor visível pode mudar sozinho
+    /// entre duas leituras sem que ninguém tenha tocado nele. Incluí-lo tornava
+    /// o teste instável no Windows sem acrescentar garantia nenhuma — o que
+    /// interessa é que nenhum arquivo mudou e que nada foi criado nem removido,
+    /// e isso o manifesto continua provando.
+    fn manifesto(raiz: &Path) -> Vec<(PathBuf, Option<(u64, std::time::SystemTime)>)> {
         let mut itens = Vec::new();
         let mut pendentes = vec![raiz.to_path_buf()];
 
@@ -435,10 +442,14 @@ mod tests {
             for entry in fs::read_dir(&atual).expect("ler manifesto") {
                 let entry = entry.expect("entrada");
                 let metadata = entry.metadata().expect("metadados");
+
                 if metadata.is_dir() {
                     pendentes.push(entry.path());
+                    itens.push((entry.path(), None));
+                } else {
+                    let modificado = metadata.modified().expect("data de modificação");
+                    itens.push((entry.path(), Some((metadata.len(), modificado))));
                 }
-                itens.push((entry.path(), metadata.len(), metadata.modified().ok()));
             }
         }
 
