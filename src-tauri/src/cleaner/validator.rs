@@ -529,10 +529,38 @@ mod tests {
         let tree = TempTree::new("travessia");
         tree.file("a.tmp", 1);
 
-        let travessia = tree.path().join("sub").join("..").join("..").join("a.tmp");
+        // O caminho é montado como **texto**, não com `join("..")`.
+        //
+        // No Windows a raiz canônica é um caminho verbatim (`\\?\C:\...`), e o
+        // `PathBuf::push` resolve `..` na hora nesses caminhos — porque o
+        // próprio sistema não os resolve depois. O resultado é que `join("..")`
+        // nunca produz um caminho com `..` ali, e o teste passaria a exercitar
+        // outra coisa: um arquivo inexistente.
+        //
+        // Montando o texto diretamente, o `..` sobrevive nas duas plataformas e
+        // o que se verifica é o que interessa — um caminho que **contém**
+        // travessia é recusado antes de qualquer acesso ao disco.
+        let travessia = PathBuf::from(format!("{}/sub/../../a.tmp", tree.path().display()));
+
         assert_eq!(
             guard(&tree).validate(&travessia).unwrap_err(),
             Rejection::SuspiciousPath
+        );
+    }
+
+    #[test]
+    fn um_caminho_normalizado_pelo_sistema_ainda_e_barrado_pela_raiz() {
+        // O outro lado da moeda: quando a plataforma resolve o `..` antes de o
+        // guarda ver o caminho, não há travessia a detectar — e a defesa que
+        // vale é o pertencimento à raiz. Um caminho já normalizado que aponte
+        // para fora continua recusado.
+        let tree = TempTree::new("normalizado");
+        let vizinho = TempTree::new("vizinho");
+        let alvo = vizinho.file("a.tmp", 1);
+
+        assert_eq!(
+            guard(&tree).validate(&alvo).unwrap_err(),
+            Rejection::OutsideRoot
         );
     }
 
