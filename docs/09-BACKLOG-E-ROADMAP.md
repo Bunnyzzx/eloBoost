@@ -76,7 +76,17 @@ inicializado. Dados ainda inexistentes (nada de mock disfarçado de real).
 | P-03 | Detecção de reparse points, junctions e cross-volume | 0.5d |
 | P-04 | Suíte de testes de segurança (tempdir isolado, ~40 casos incl. adversariais) | 1d |
 
-### Épico 3 — Limpeza `P1` (~9d)
+### Épico 3 — Engine de Limpeza `P1` (~9d) — **entregue (parcial)**
+
+Entregue: `PathGuard` com `ValidatedPath` por identidade, executor que só aceita caminho validado,
+contrato `Cleanable` com implementação padrão, fluxo prévia → confirmação → execução com token de
+uso único, progresso por evento, relatório completo e primeiro histórico (informativo).
+
+Pendente para o Épico 3.1 / 4: Dry Run explícito, cancelamento cooperativo, detalhes paginados por
+item (`cleanup_get_items`), Lixeira via `SHEmptyRecycleBin` (decisão D-2) e remoção por handle no
+Windows (endurecimento anti-TOCTOU).
+
+### Épico 3 — Backlog original `P1` (~9d)
 | ID | Tarefa | Est. |
 |---|---|---|
 | C-01 | Trait `Cleaner` + registro de categorias + `cleanup_list_categories` | 0.5d |

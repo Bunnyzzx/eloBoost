@@ -20,7 +20,8 @@ const CATEGORY: ScanCategory = ScanCategory::Logs;
 const LOG_EXTENSIONS: &[&str] = &["log", "etl"];
 
 /// Raízes desta categoria neste computador.
-fn roots() -> Vec<ScanRoot> {
+#[must_use]
+pub fn roots() -> Vec<ScanRoot> {
     let Some(windows) = locations::system_root() else {
         return Vec::new();
     };

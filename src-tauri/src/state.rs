@@ -9,6 +9,7 @@ use std::path::PathBuf;
 use elo_core::db::Database;
 use elo_core::errors::{AppError, AppResult, ErrorCode};
 
+use crate::services::cleaner_service::CleanerState;
 use crate::services::system_service::SystemProbe;
 
 /// Estado global registrado no Tauri via `manage`.
@@ -23,6 +24,11 @@ pub struct AppState {
     /// tempo a partir da diferença entre duas leituras — uma instância nova por
     /// chamada devolveria zero na frequência da CPU.
     pub system_probe: SystemProbe,
+    /// Autorização pendente entre a prévia e a execução de uma limpeza.
+    ///
+    /// Vive no estado porque a confirmação precisa sobreviver entre dois
+    /// comandos: é ela que torna impossível remover algo sem passar pela prévia.
+    pub cleaner: CleanerState,
 }
 
 impl AppState {
@@ -45,6 +51,7 @@ impl AppState {
             database,
             data_dir,
             system_probe: SystemProbe::new(),
+            cleaner: CleanerState::new(),
         })
     }
 

@@ -3,6 +3,7 @@
 //! Todos os dados do eloBoost ficam neste computador, em `%APPDATA%\eloBoost`.
 //! Nenhuma query é montada por concatenação — apenas *prepared statements*.
 
+pub mod activity;
 pub mod migrations;
 
 use std::path::{Path, PathBuf};

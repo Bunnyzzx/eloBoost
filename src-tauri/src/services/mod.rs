@@ -5,6 +5,7 @@
 //! formatação (docs/01 §2).
 
 pub mod app_service;
+pub mod cleaner_service;
 pub mod cpu_service;
 pub mod gpu_service;
 pub mod memory_service;

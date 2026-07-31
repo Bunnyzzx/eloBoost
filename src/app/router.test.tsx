@@ -8,6 +8,7 @@ import { NAV_ENTRIES, ROUTES } from '@/constants/routes';
 import { AboutPage } from '@/pages/about/AboutPage';
 import { CleanupPage } from '@/pages/cleanup/CleanupPage';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
+import { OptimizationsPage } from '@/pages/optimizations/OptimizationsPage';
 import { SettingsPage } from '@/pages/settings/SettingsPage';
 
 /** O título do dashboard depende da hora local. */
@@ -24,6 +25,7 @@ function renderApp(initialPath: string) {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path={ROUTES.cleanup.slice(1)} element={<CleanupPage />} />
+          <Route path={ROUTES.optimizations.slice(1)} element={<OptimizationsPage />} />
           <Route path={ROUTES.settings.slice(1)} element={<SettingsPage />} />
           <Route path={ROUTES.about.slice(1)} element={<AboutPage />} />
           <Route path="*" element={<Navigate to={ROUTES.dashboard} replace />} />
@@ -65,9 +67,10 @@ describe('navegação do aplicativo', () => {
   });
 
   it('deixa claro que as telas ainda não implementadas não têm dados', () => {
-    renderApp(ROUTES.cleanup);
+    // Limpeza deixou de servir de exemplo no Épico 3: ela agora é real.
+    renderApp(ROUTES.optimizations);
     expect(screen.getByText('Esta tela ainda não foi implementada')).toBeInTheDocument();
-    expect(screen.getByText(/Planejado para: Épico 3/)).toBeInTheDocument();
+    expect(screen.getByText(/Planejado para: Épico 9/)).toBeInTheDocument();
   });
 
   it('redireciona rota desconhecida para o início em vez de tela em branco', () => {

@@ -11,7 +11,8 @@ use crate::scanner::{self, locations, ScanRoot};
 const CATEGORY: ScanCategory = ScanCategory::UserTemp;
 
 /// Raízes desta categoria neste computador.
-fn roots() -> Vec<ScanRoot> {
+#[must_use]
+pub fn roots() -> Vec<ScanRoot> {
     locations::user_temp()
         .map(|path| vec![ScanRoot::recursive(path)])
         .unwrap_or_default()

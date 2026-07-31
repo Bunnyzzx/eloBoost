@@ -16,7 +16,8 @@ const CATEGORY: ScanCategory = ScanCategory::Thumbnails;
 const CACHE_PREFIXES: &[&str] = &["thumbcache_", "iconcache_"];
 
 /// Raízes desta categoria neste computador.
-fn roots() -> Vec<ScanRoot> {
+#[must_use]
+pub fn roots() -> Vec<ScanRoot> {
     let Some(local) = locations::local_app_data() else {
         return Vec::new();
     };

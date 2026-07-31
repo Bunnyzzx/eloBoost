@@ -17,7 +17,8 @@ use crate::scanner::{self, locations, ScanRoot};
 const CATEGORY: ScanCategory = ScanCategory::Downloads;
 
 /// Raízes desta categoria neste computador.
-fn roots() -> Vec<ScanRoot> {
+#[must_use]
+pub fn roots() -> Vec<ScanRoot> {
     locations::user_profile()
         .map(|profile| vec![ScanRoot::recursive(profile.join("Downloads"))])
         .unwrap_or_default()

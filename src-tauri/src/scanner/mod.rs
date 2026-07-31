@@ -185,6 +185,26 @@ fn is_link(metadata: &fs::Metadata) -> bool {
     }
 }
 
+/// Recebe cada item aceito durante a caminhada.
+///
+/// Deliberadamente sem valor de retorno: o visitante **observa**, não altera o
+/// rumo da travessia. Quem decide o que fazer com um arquivo é a Engine, e ela
+/// o faz depois de validar o caminho — não no meio da enumeração.
+pub trait WalkVisitor {
+    /// Um arquivo que passou pelo filtro da raiz.
+    fn on_file(&mut self, path: &Path, metadata: &fs::Metadata);
+
+    /// Um diretório aberto com sucesso, com a sua profundidade a partir da raiz.
+    fn on_directory(&mut self, _path: &Path, _depth: usize) {}
+}
+
+/// Visitante que ignora tudo — usado pela varredura pura.
+struct NoopVisitor;
+
+impl WalkVisitor for NoopVisitor {
+    fn on_file(&mut self, _path: &Path, _metadata: &fs::Metadata) {}
+}
+
 /// Percorre uma raiz somando arquivos, pastas e bytes.
 ///
 /// A pilha guarda apenas os diretórios pendentes — nunca a lista de arquivos.
@@ -193,6 +213,22 @@ fn is_link(metadata: &fs::Metadata) -> bool {
 /// centenas de milhares de arquivos custa o mesmo que uma com dez.
 #[must_use]
 pub fn walk_root(root: &ScanRoot) -> WalkOutcome {
+    walk_root_with(root, &mut NoopVisitor)
+}
+
+/// Percorre uma raiz notificando um visitante a cada item aceito.
+///
+/// É a mesma caminhada de [`walk_root`] — mesmas regras de link, profundidade,
+/// filtro e classificação de erro. O visitante existe para que a Engine de
+/// Limpeza reutilize esta travessia em vez de escrever a sua: duplicar a lógica
+/// significaria duas implementações de "nunca seguir link", e só uma delas seria
+/// revisada com o cuidado devido.
+///
+/// **Este módulo continua somente leitura.** O visitante recebe apenas
+/// referências; qualquer remoção acontece do lado de quem o implementa, em
+/// `cleaner/`, e só através de um caminho já validado.
+#[must_use]
+pub fn walk_root_with(root: &ScanRoot, visitor: &mut dyn WalkVisitor) -> WalkOutcome {
     let mut outcome = WalkOutcome::default();
 
     let Ok(root_metadata) = fs::symlink_metadata(&root.path) else {
@@ -225,6 +261,7 @@ pub fn walk_root(root: &ScanRoot) -> WalkOutcome {
         };
 
         outcome.folder_count += 1;
+        visitor.on_directory(&directory, depth);
 
         for entry in entries {
             let entry = match entry {
@@ -270,6 +307,7 @@ pub fn walk_root(root: &ScanRoot) -> WalkOutcome {
 
             outcome.file_count += 1;
             outcome.size_bytes = outcome.size_bytes.saturating_add(metadata.len());
+            visitor.on_file(&entry.path(), &metadata);
         }
     }
 

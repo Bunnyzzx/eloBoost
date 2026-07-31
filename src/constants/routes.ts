@@ -77,7 +77,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     label: 'Limpeza',
     icon: Sparkles,
     group: 'tools',
-    description: 'Análise e remoção segura de arquivos temporários',
+    description: 'Selecione o que remover e libere espaço com segurança',
     plannedIn: 'Épico 3',
   },
   {
@@ -142,7 +142,7 @@ export const NAV_ENTRIES: readonly NavEntry[] = [
     icon: History,
     group: 'records',
     description: 'Tudo o que o eloBoost já fez neste computador',
-    plannedIn: 'Épico 4',
+    plannedIn: 'Épico 3 e 4',
   },
   {
     path: ROUTES.settings,

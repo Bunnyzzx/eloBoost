@@ -5,6 +5,10 @@
 //! apenas a forma dos dados.
 
 pub mod availability;
+pub mod clean_job;
+pub mod clean_preview;
+pub mod clean_report;
+pub mod clean_result;
 pub mod scan_category;
 pub mod scan_result;
 pub mod scan_summary;

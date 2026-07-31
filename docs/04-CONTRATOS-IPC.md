@@ -46,7 +46,28 @@ renderizada.
 \* áreas de sistema (`windows_temp`, `logs`) podem exigir elevação para leitura completa; a análise
 conclui assim mesmo, com status `completed_with_warnings` e o diagnóstico do que ficou de fora.
 
-### Limpeza
+### Limpeza (implementado no Épico 3)
+| Comando | Entrada | Saída | Admin |
+|---|---|---|---|
+| `cleaner_preview` | — | `CleanPreview` | não |
+| `cleaner_execute` | `{ previewId, confirmationToken, categories }` | `CleanReport` | não* |
+| `history_list_recent` | `{ limit? }` | `HistoryEntry[]` | não |
+
+Nenhum dos três recebe caminho. `cleaner_execute` **exige** o par `previewId` +
+`confirmationToken` emitido por `cleaner_preview`: o token é de uso único, expira em 5 minutos, e
+sem ele a execução é recusada com `CONFIRMATION_REQUIRED`. A seleção enviada pela interface é
+intersectada com a autorização da prévia — uma categoria que a prévia não liberou não é limpa nem
+que o frontend peça.
+
+| Evento | Carga | Quando |
+|---|---|---|
+| `cleaner://category` | `CategoryCleanResult` | ao iniciar e ao concluir cada categoria |
+| `cleaner://progress` | `{ category, removedFiles, freedBytes }` | a cada 200 arquivos processados |
+
+\* áreas de sistema (`windows_temp`, `logs`) podem exigir elevação; a limpeza conclui assim mesmo,
+com status `partially_completed` e o diagnóstico do que ficou.
+
+### Limpeza — contratos planejados (Épicos seguintes)
 | Comando | Entrada | Saída | Admin |
 |---|---|---|---|
 | `cleanup_list_categories` | — | `CleanupCategoryInfo[]` | não |

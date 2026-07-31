@@ -12,12 +12,14 @@
 //! diretórios e soma tamanhos, e há um teste que falha se qualquer API de
 //! escrita aparecer no seu código.
 
+pub mod cleaner;
 pub mod commands;
 pub mod models;
 pub mod scanner;
 pub mod services;
 pub mod state;
 pub mod system;
+pub mod traits;
 pub mod util;
 
 use std::path::PathBuf;
@@ -68,6 +70,9 @@ pub fn run() {
             commands::system::system_get_snapshot,
             commands::scanner::scanner_list_categories,
             commands::scanner::scanner_scan_all,
+            commands::cleaner::cleaner_preview,
+            commands::cleaner::cleaner_execute,
+            commands::cleaner::history_list_recent,
         ])
         .run(tauri::generate_context!())
         .expect("erro ao iniciar a janela do eloBoost");

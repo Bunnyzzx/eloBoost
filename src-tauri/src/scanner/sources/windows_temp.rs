@@ -13,7 +13,8 @@ use crate::scanner::{self, locations, ScanRoot};
 const CATEGORY: ScanCategory = ScanCategory::WindowsTemp;
 
 /// Raízes desta categoria neste computador.
-fn roots() -> Vec<ScanRoot> {
+#[must_use]
+pub fn roots() -> Vec<ScanRoot> {
     locations::system_root()
         .map(|windows| vec![ScanRoot::recursive(windows.join("Temp"))])
         .unwrap_or_default()

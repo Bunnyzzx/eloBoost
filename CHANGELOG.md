@@ -7,6 +7,67 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Não lançado]
 
+### Adicionado — Épico 3: Engine de Limpeza
+
+O primeiro épico que remove arquivos. Toda remoção passa por três portas em série, e a do meio é
+uma garantia do sistema de tipos, não uma convenção.
+
+**`PathGuard` (`cleaner/validator.rs`)**
+
+- `ValidatedPath` tem campos privados e **nenhum construtor público**: a única forma de obter um é
+  `PathGuard::validate`. Como o executor só aceita `&ValidatedPath`, é impossível — pelo
+  compilador — chamar a remoção com uma `String`.
+- Verifica, em ordem: denylist absoluta (System32, Program Files, `$Recycle.Bin`, `pagefile.sys`,
+  pastas pessoais), componentes suspeitos (`..`, UNC, dispositivos, caracteres de controle),
+  pertencimento à raiz canônica, natureza do item (só arquivo comum) e identidade.
+- **Canonicaliza o diretório pai, não o arquivo**: canonicalizar o arquivo resolveria um link, e é
+  justamente o link que precisa ser recusado. Com o pai resolvido e o nome preservado, um atalho no
+  meio do caminho não consegue apontar a remoção para fora da área.
+- A identidade do arquivo (inode no Unix; carimbos + atributos no Windows) é reconferida
+  imediatamente antes de remover — se o arquivo foi trocado, a remoção é abortada.
+
+**Executor (`cleaner/executor.rs`)**
+
+- **Nunca `remove_dir_all`.** Arquivos saem um a um; pastas só saem se já estiverem vazias, via
+  `remove_dir`, que falha por construção se ainda houver conteúdo. Um defeito aqui perde um
+  arquivo, nunca uma árvore. Há um teste que lê o próprio código-fonte e falha se a chamada
+  recursiva aparecer.
+- Nenhum erro interrompe a limpeza: acesso negado, arquivo em uso, caminho longo e item inexistente
+  viram contadores e a execução segue.
+
+**Contrato `Cleanable` (`traits/cleanable.rs`)**
+
+- Os quatro verbos — `scan`, `preview`, `validate`, `clean` — têm **implementação padrão**. Uma
+  categoria informa apenas quem é e onde vive. Se cada uma escrevesse a própria caminhada,
+  existiriam sete implementações de "nunca seguir link", e só uma seria revisada a sério.
+- A Engine reaproveita a travessia do scanner via `walk_root_with`, em vez de duplicá-la. O módulo
+  `scanner/` continua sem nenhuma API de escrita.
+
+**Fluxo prévia → confirmação → execução**
+
+- `cleaner_preview` mede (somente leitura) e emite um `previewId` + `confirmationToken`.
+- `cleaner_execute` **exige** esse par: token de uso único, expira em 5 minutos. Um duplo clique
+  não roda a limpeza duas vezes.
+- A seleção da interface é intersectada com a autorização da prévia: uma categoria que a prévia não
+  liberou não é limpa nem que o frontend peça.
+
+**Interface**
+
+- Tela Limpeza com as fases seleção → confirmação → execução → resultado, cards atualizando ao
+  vivo, e um `Checkbox` acessível novo (com estado indeterminado para o "marcar todas").
+- Downloads e Lixeira aparecem medidas e **sem caixa de seleção** — a política do backend chega até
+  o pixel.
+- O resultado separa **itens mantidos** de **falhas**: um arquivo em uso que o eloBoost preservou
+  não é um erro, e juntá-los apagaria o caso em que o produto agiu com cautela.
+- Tela Histórico com o registro de cada limpeza. Informativa: não há botão de desfazer, e o rodapé
+  diz que arquivos removidos não podem ser restaurados por ali.
+
+**Persistência**
+
+- `elo-core::db::activity` — repositório do histórico, com SQL junto do banco e testável sem Tauri.
+  `undo_kind` é gravado como `'none'`: enquanto a restauração não existir, nenhum registro pode
+  sugerir que ela existe.
+
 ### Adicionado — Épico 2: infraestrutura de análise (somente leitura)
 
 Nenhum arquivo é aberto, alterado, movido ou removido. Esta etapa mede — a limpeza é o Épico 3.

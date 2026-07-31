@@ -2,11 +2,11 @@
 
 > Utilitário de limpeza, manutenção e otimização **segura** para Windows 10 e 11.
 >
-> **Status: Épico 2 — análise do computador.** A tela Início lê informações verdadeiras do
-> computador e a tela Análise percorre as áreas onde o Windows acumula arquivos descartáveis,
-> informando quantos arquivos e quanto espaço cada uma ocupa. **Tudo é somente leitura:** nenhum
-> arquivo é aberto, alterado, movido ou removido, e nenhuma escrita no registro existe no projeto.
-> As telas ainda não implementadas declaram isso explicitamente, sem dados simulados.
+> **Status: Épico 3 — Engine de Limpeza.** Início lê informações reais do computador, Análise mede
+> as áreas descartáveis e **Limpeza remove o que você marcar** — sempre depois de uma prévia e de
+> uma confirmação explícita. Toda remoção passa pelo `PathGuard`, que só aprova caminhos dentro das
+> áreas autorizadas; arquivos pessoais e a pasta Downloads nunca são limpos em lote. **Nenhuma
+> otimização, escrita no registro, alteração de serviço ou restauração existe no projeto.**
 
 ---
 
@@ -27,7 +27,10 @@ Estes limites são parte da arquitetura, não apenas uma intenção:
 
 - Todo número exibido vem de uma leitura real do computador. Quando um dado não pode ser lido, o
   aplicativo diz isso em vez de estimar.
-- Arquivos pessoais só são removidos com seleção explícita, item a item.
+- Arquivos pessoais só são removidos com seleção explícita, item a item. A pasta Downloads é
+  medida e **nunca** limpa em lote — a política está no tipo, não num comentário.
+- Nada é removido sem uma prévia e uma confirmação: o comando de execução exige um token de uso
+  único emitido pela prévia que o usuário viu.
 - A interface não executa comandos arbitrários: apenas operações nomeadas e validadas.
 - A elevação de privilégio é pedida por operação, com explicação antes — nunca para a sessão
   inteira, e nunca contornando o UAC.
@@ -46,6 +49,19 @@ indisponíveis nesta máquina Linux, em vez de zeradas:
 
 ![Análise com dados reais](screenshots/20-analise-aplicativo-real.png)
 
+A limpeza, em três etapas. Seleção — Downloads aparece medido, sem caixa de seleção:
+
+![Seleção da limpeza](screenshots/21-limpeza-selecao-real.png)
+
+Confirmação, com o total, as áreas pelo nome e a promessa sobre arquivos pessoais:
+
+![Confirmação da limpeza](screenshots/22-limpeza-confirmacao-real.png)
+
+Resultado de uma limpeza real: 521 arquivos removidos, 2 pastas vazias e **1 atalho preservado** —
+o link que apontava para fora da área permitida:
+
+![Resultado da limpeza](screenshots/23-limpeza-resultado-real.png)
+
 A ficha técnica completa. Os campos que este sistema não expõe aparecem como `não disponível`, com
 o motivo ao passar o mouse — nunca zerados:
 
@@ -55,7 +71,7 @@ o motivo ao passar o mouse — nunca zerados:
 | --- | --- |
 | ![Sobre](screenshots/12-sobre.png) | ![Tema claro](screenshots/13-tema-claro.png) |
 
-As 21 capturas de `screenshots/` cobrem as 13 telas, os dois temas, as resoluções 1280×720,
+As 25 capturas de `screenshots/` cobrem as 13 telas, os dois temas, as resoluções 1280×720,
 1366×768, 1920×1080 e o aplicativo real em execução.
 
 Para regenerá-las:
@@ -139,11 +155,11 @@ pnpm verify:rust      # cargo fmt --check + clippy -D warnings + cargo test
 # Individualmente
 pnpm typecheck
 pnpm lint
-pnpm test             # 172 testes do frontend
+pnpm test             # 206 testes do frontend
 pnpm test:watch
 pnpm test:coverage
 
-cargo test --workspace --all-features   # 168 testes do backend
+cargo test --workspace --all-features   # 264 testes do backend
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo fmt --all --check
 ```
@@ -168,11 +184,17 @@ pnpm preview --port 4173 &
 pnpm check:motion
 ```
 
-**Nenhum teste escreve fora de uma pasta temporária própria, e nenhum toca o registro.** Os testes
-do banco usam SQLite em memória ou diretórios isolados; os testes do scanner montam a própria
-árvore de arquivos e a removem no fim. Os que exercitam áreas reais da máquina — a pasta
-temporária, por exemplo — apenas as **leem**, e um deles compara um manifesto completo antes e
-depois para provar que a análise não alterou nada.
+**Nenhum teste escreve nem remove fora de uma pasta temporária própria, e nenhum toca o registro.**
+Os testes do banco usam SQLite em memória ou diretórios isolados; os do scanner e os da Engine de
+Limpeza montam a própria árvore de arquivos e a removem no fim. Os que exercitam áreas reais da
+máquina — a pasta temporária, por exemplo — apenas as **leem**, e um deles compara um manifesto
+completo antes e depois para provar que a análise não alterou nada.
+
+Três testes sustentam a garantia de segurança da limpeza, e vale rodá-los ao mexer no `cleaner/`:
+
+```bash
+cargo test --package eloboost cleaner::   # PathGuard, executor e Engine
+```
 
 ## 5. Gerar o build
 
@@ -210,6 +232,8 @@ crates/elo-core/     Núcleo sem dependência do Tauri
 src-tauri/           Aplicativo Tauri
   src/commands/      Comandos nomeados (a fronteira com a interface)
   src/scanner/       Motor de varredura somente leitura + uma fonte por área
+  src/cleaner/       Engine de Limpeza: validator (PathGuard) · executor · engine
+  src/traits/        Contrato `Cleanable`, com implementação padrão dos 4 verbos
   src/models/        Contratos de dados (Availability, resultados de análise)
   src/state.rs       Estado compartilhado (banco, pasta de dados)
   capabilities/      Permissões mínimas da janela

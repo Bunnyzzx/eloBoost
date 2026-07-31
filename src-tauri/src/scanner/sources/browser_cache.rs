@@ -109,7 +109,8 @@ fn cache_roots(profiles: &[PathBuf], cache_dirs: &[&str]) -> Vec<ScanRoot> {
 }
 
 /// Raízes desta categoria neste computador.
-fn roots() -> Vec<ScanRoot> {
+#[must_use]
+pub fn roots() -> Vec<ScanRoot> {
     let mut roots = Vec::new();
 
     for data_dir in chromium_data_dirs() {

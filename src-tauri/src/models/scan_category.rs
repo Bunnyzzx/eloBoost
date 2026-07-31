@@ -5,7 +5,7 @@
 //! partir de dados vindos da interface — o frontend recebe identificadores, não
 //! os produz (docs/04 §caminhos).
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// O que o eloBoost poderá fazer com esta categoria numa etapa futura.
 ///
@@ -24,7 +24,7 @@ pub enum RemovalPolicy {
 }
 
 /// Uma área conhecida do sistema que o scanner sabe medir.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScanCategory {
     /// `%TEMP%` — temporários do usuário atual.
